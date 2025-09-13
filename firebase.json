@@ -1,0 +1,25 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "mil-hub",
+          "appId": "1:227874595135:android:c1e46853ddd0f73b17b38a",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "mil-hub",
+          "configurations": {
+            "android": "1:227874595135:android:c1e46853ddd0f73b17b38a"
+          }
+        }
+      }
+    }
+  }
+}

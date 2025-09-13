@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the resource
+    function isOwner(resource) {
+      return request.auth.uid == resource.data.authorId;
+    }
+    
+    // Helper function to check if user owns the document being created
+    function isOwnerCreate() {
+      return request.auth.uid == request.resource.data.authorId;
+    }
+    
+    // Community Posts - Simplified rules for testing
+    match /communityPosts/{postId} {
+      // Allow reading for authenticated users
+      allow read: if isAuthenticated();
+      
+      // Allow creating posts for authenticated users
+      allow create: if isAuthenticated() && isOwnerCreate();
+      
+      // Allow updating posts for authenticated users (with ownership check for sensitive fields)
+      allow update: if isAuthenticated() && 
+                       (isOwner(resource) || 
+                        request.resource.data.diff(resource.data).affectedKeys()
+                          .hasOnly(['likeCount', 'commentCount', 'shareCount', 'viewCount', 'likedBy']));
+      
+      // Allow deleting posts only by the owner
+      allow delete: if isAuthenticated() && isOwner(resource);
+      
+      // Comments subcollection
+      match /comments/{commentId} {
+        // Allow reading comments for authenticated users
+        allow read: if isAuthenticated();
+        
+        // Allow creating comments for authenticated users
+        allow create: if isAuthenticated() && isOwnerCreate();
+        
+        // Allow updating comments for authenticated users
+        allow update: if isAuthenticated() && 
+                         (isOwner(resource) || 
+                          request.resource.data.diff(resource.data).affectedKeys()
+                            .hasOnly(['reactions', 'userReactions', 'replyCount']));
+        
+        // Allow deleting comments only by the owner
+        allow delete: if isAuthenticated() && isOwner(resource);
+      }
+      
+      // Likes subcollection
+      match /likes/{userId} {
+        // Allow reading likes for authenticated users
+        allow read: if isAuthenticated();
+        
+        // Allow creating/updating likes only for the user's own like
+        allow create, update: if isAuthenticated() && request.auth.uid == userId;
+        
+        // Allow deleting likes only for the user's own like
+        allow delete: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
+    
+    // User Community Stats
+    match /userCommunityStats/{userId} {
+      // Allow reading for authenticated users
+      allow read: if isAuthenticated();
+      
+      // Allow creating/updating only own stats
+      allow create, update: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Don't allow deleting stats
+      allow delete: if false;
+    }
+    
+    // Reports collection for content moderation
+    match /reports/{reportId} {
+      // Allow reading reports for authenticated users
+      allow read: if isAuthenticated();
+      
+      // Allow creating reports for authenticated users
+      allow create: if isAuthenticated() && request.resource.data.reportedBy == request.auth.uid;
+      
+      // Don't allow updating or deleting reports
+      allow update, delete: if false;
+    }
+    
+    // User Progress (existing rules)
+    match /userProgress/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Default allow for testing - you can restrict this later
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
