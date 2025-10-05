@@ -7,6 +7,20 @@ class CommunityService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Helper method to get display name from Firestore
+  static Future<String?> _getDisplayNameFromFirestore(String userId) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        return doc.data()?['displayName'] as String?;
+      }
+    } catch (e) {
+      // Log error but don't throw to allow fallback to 'Anonymous User'
+      print('Error getting display name from Firestore: $e');
+    }
+    return null;
+  }
+
   // Collections
   static const String _postsCollection = 'communityPosts';
   static const String _commentsCollection = 'comments';
@@ -71,7 +85,10 @@ class CommunityService {
     final post = PostModel(
       id: '',
       authorId: user.uid,
-      authorName: user.displayName ?? 'Anonymous User',
+      authorName:
+          user.displayName ??
+          (await _getDisplayNameFromFirestore(user.uid)) ??
+          'Anonymous User',
       authorPhoto: user.photoURL,
       content: content,
       type: type,

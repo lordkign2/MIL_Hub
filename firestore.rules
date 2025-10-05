@@ -97,5 +97,13 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if isAuthenticated();
     }
+
+    // Link Checks Collection - Add to existing rules
+    match /linkChecks/{linkCheckId} {
+      allow read: if true;  // Community visibility
+      allow create: if request.auth != null 
+                  && request.auth.uid == resource.data.checkedBy;
+      allow update, delete: if request.auth.uid == resource.data.checkedBy;
+    }
   }
 }

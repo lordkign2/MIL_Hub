@@ -218,6 +218,19 @@ class SimpleUserDashboard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildActionButton(
+                          'Check Links',
+                          Icons.security_rounded,
+                          Colors.indigo,
+                          () {
+                            // Navigate to Check screen via home navigation
+                            Navigator.pushReplacementNamed(context, '/home');
+                            // Note: The home screen will handle showing the check tab
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildActionButton(
                           'Start Learning',
                           Icons.school_rounded,
                           Colors.blue,
@@ -232,7 +245,11 @@ class SimpleUserDashboard extends StatelessWidget {
                           },
                         ),
                       ),
-                      const SizedBox(width: 12),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
                       Expanded(
                         child: _buildActionButton(
                           'View Progress',
@@ -244,6 +261,23 @@ class SimpleUserDashboard extends StatelessWidget {
                               const SnackBar(
                                 content: Text('Progress tracking coming soon'),
                                 backgroundColor: Colors.green,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildActionButton(
+                          'Community',
+                          Icons.people_rounded,
+                          Colors.purple,
+                          () {
+                            // TODO: Navigate to community
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Community features available'),
+                                backgroundColor: Colors.purple,
                               ),
                             );
                           },

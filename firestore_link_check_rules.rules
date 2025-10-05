@@ -1,0 +1,51 @@
+// Firestore Security Rules for Link Checking Feature
+// Add these rules to your existing firestore.rules file
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Link Checks Collection
+    // - Anyone can read link checks (for community transparency)
+    // - Only authenticated users can create link checks
+    // - Users can only update/delete their own link checks
+    match /linkChecks/{linkCheckId} {
+      // Allow anyone to read link checks for community visibility
+      allow read: if true;
+      
+      // Allow authenticated users to create new link checks
+      allow create: if request.auth != null 
+                   && request.auth.uid == resource.data.checkedBy
+                   && validateLinkCheckData(request.resource.data);
+      
+      // Allow users to update/delete only their own link checks
+      allow update, delete: if request.auth != null 
+                           && request.auth.uid == resource.data.checkedBy;
+    }
+    
+    // Validation function for link check data
+    function validateLinkCheckData(data) {
+      return data.keys().hasAll(['url', 'originalUrl', 'isSafe', 'isReachable', 
+                                'verdict', 'suspiciousKeywords', 'warnings', 
+                                'metadata', 'checkedBy', 'createdAt'])
+             && data.url is string
+             && data.originalUrl is string  
+             && data.isSafe is bool
+             && data.isReachable is bool
+             && data.verdict is string
+             && data.suspiciousKeywords is list
+             && data.warnings is list
+             && data.metadata is map
+             && data.checkedBy is string
+             && data.createdAt is timestamp
+             && data.url.size() > 0
+             && data.url.size() <= 2048  // Reasonable URL length limit
+             && data.verdict.size() <= 100
+             && data.suspiciousKeywords.size() <= 50
+             && data.warnings.size() <= 20;
+    }
+    
+    // Other existing rules for your app...
+    // (keep your existing user rules, etc.)
+  }
+}

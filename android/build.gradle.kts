@@ -5,6 +5,17 @@ allprojects {
     }
 }
 
+// Configure JVM toolchain for all subprojects
+subprojects {
+    afterEvaluate {
+        if (project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
+            project.extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension> {
+                jvmToolchain(17)
+            }
+        }
+    }
+}
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")

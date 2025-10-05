@@ -5,10 +5,13 @@ import 'package:mil_hub/screens/landing_page.dart';
 import 'features/auth/services/auth_wrapper.dart';
 import 'firebase_options.dart';
 import 'screens/home.dart';
+import 'screens/enhanced_share_check_screen.dart' as enhanced_share;
 import 'constants/global_variables.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/auth/screens/signup_screen.dart';
+import 'services/share_intent_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -18,13 +21,21 @@ void main() async {
 class MILHubApp extends StatelessWidget {
   const MILHubApp({super.key});
 
+  // Create global navigator key for share intent navigation
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
+    // Initialize share intent service
+    ShareIntentService.initialize(navigatorKey);
+
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: "MIL Hub",
       theme: ThemeData.dark().copyWith(
-        primaryColor: GlobalVariables.secondaryColor,        
+        primaryColor: GlobalVariables.secondaryColor,
         scaffoldBackgroundColor: GlobalVariables.backgroundColor,
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Colors.white70),
@@ -36,10 +47,14 @@ class MILHubApp extends StatelessWidget {
         "/signup": (_) => const SignupScreen(),
         "/home": (_) => const HomeScreen(),
         "/dashboard": (_) => const DashboardScreen(),
+        "/link-check": (_) =>
+            const HomeScreen(), // Navigate to home and show check tab
+        "/share-check": (_) =>
+            const enhanced_share.ShareCheckScreen(), // Enhanced share check route
       },
       home: FirebaseAuth.instance.currentUser == null
-        ? LandingPage()
-        : const HomeScreen(),
+          ? LandingPage()
+          : const HomeScreen(),
     );
   }
 }
