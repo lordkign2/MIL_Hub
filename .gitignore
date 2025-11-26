@@ -31,7 +31,8 @@ android/build/
 android/gradle/wrapper/gradle-wrapper.jar
 android/mil_hub_android.iml
 
-# iOS specific
+# iOS specific 
+
 ios/Runner/GoogleService-Info.plist
 ios/Flutter/App.framework/
 ios/Flutter/Flutter.framework/
