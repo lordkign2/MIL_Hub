@@ -1,20 +1,28 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mil_hub/features/users/dashboard/dashboard_screen.dart';
-import 'package:mil_hub/screens/landing_page.dart';
-import 'features/auth/services/auth_wrapper.dart';
-import 'firebase_options.dart';
+import 'core/di/injection_container.dart';
+import 'core/theme/app_theme.dart';
+import 'core/constants/app_constants.dart';
+import 'features/auth/presentation/widgets/auth_wrapper.dart';
+import 'features/auth/presentation/screens/new_login_screen.dart';
+import 'features/auth/presentation/screens/new_signup_screen.dart';
+import 'features/users/dashboard/dashboard_screen.dart';
+import 'screens/landing_page.dart';
 import 'screens/home.dart';
 import 'screens/enhanced_share_check_screen.dart' as enhanced_share;
-import 'constants/global_variables.dart';
+import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'features/auth/screens/login_screen.dart';
-import 'features/auth/screens/signup_screen.dart';
 import 'services/share_intent_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize dependency injection
+  await initializeDependencies();
+  await initializeFeatureDependencies();
+
   runApp(const MILHubApp());
 }
 
@@ -33,28 +41,19 @@ class MILHubApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      title: "MIL Hub",
-      theme: ThemeData.dark().copyWith(
-        primaryColor: GlobalVariables.secondaryColor,
-        scaffoldBackgroundColor: GlobalVariables.backgroundColor,
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: Colors.white70),
-        ),
-      ),
+      title: AppConstants.appName,
+      theme: AppTheme.darkTheme,
       routes: {
-        "/landing": (_) => const LandingPage(),
-        "/login": (_) => const LoginScreen(),
-        "/signup": (_) => const SignupScreen(),
-        "/home": (_) => const HomeScreen(),
-        "/dashboard": (_) => const DashboardScreen(),
-        "/link-check": (_) =>
-            const HomeScreen(), // Navigate to home and show check tab
-        "/share-check": (_) =>
-            const enhanced_share.ShareCheckScreen(), // Enhanced share check route
+        AppConstants.landingRoute: (_) => const LandingPage(),
+        AppConstants.loginRoute: (_) => const NewLoginScreen(),
+        AppConstants.signupRoute: (_) => const NewSignupScreen(),
+        AppConstants.homeRoute: (_) => const HomeScreen(),
+        AppConstants.dashboardRoute: (_) => const DashboardScreen(),
+        AppConstants.linkCheckRoute: (_) => const HomeScreen(),
+        AppConstants.shareCheckRoute: (_) =>
+            const enhanced_share.ShareCheckScreen(),
       },
-      home: FirebaseAuth.instance.currentUser == null
-          ? LandingPage()
-          : const HomeScreen(),
+      home: const AuthWrapper(),
     );
   }
 }

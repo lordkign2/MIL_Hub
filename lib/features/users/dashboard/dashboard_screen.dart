@@ -18,7 +18,7 @@ class DashboardScreen extends StatelessWidget {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    // Use the simple dashboard to avoid blank screen issues
-    return const SimpleUserDashboard(themeColor: Colors.purple);
+    // Use the enhanced dashboard with admin integration
+    return const EnhancedUserDashboard(themeColor: Colors.purple);
   }
 }

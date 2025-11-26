@@ -14,6 +14,8 @@ A comprehensive media literacy education and fact-checking platform designed spe
 - **Google Sign-In**: Quick authentication with Google accounts
 - **Session Management**: Persistent login sessions with Firebase Auth
 - **User Profile Management**: Comprehensive user profiles and settings
+- **Clean Architecture Implementation**: Domain, Data, and Presentation layers with BLoC state management
+- **Advanced Error Handling**: Structured exception and failure patterns across layers
 
 ### 📚 Learn Module
 - **Interactive Lessons**: Structured media literacy education content
@@ -23,6 +25,8 @@ A comprehensive media literacy education and fact-checking platform designed spe
 - **Personalized Dashboard**: Adaptive learning paths based on progress
 - **Streak Tracking**: Daily learning streaks to encourage consistency
 - **Leaderboards**: Community-driven competitive learning
+- **Clean Architecture Implementation**: Full Clean Architecture with domain entities, use cases, data models, and BLoC pattern
+- **Progress Tracking**: Real-time lesson completion and user progress monitoring
 
 ### 🔍 Instant Check Feature
 - **Link Verification**: Real-time analysis of URLs and news content
@@ -30,6 +34,9 @@ A comprehensive media literacy education and fact-checking platform designed spe
 - **Share-to-Verify**: Integration with device sharing functionality
 - **Clipboard Monitoring**: Privacy-aware background monitoring for suspicious links
 - **Security Alerts**: Proactive warnings about potentially harmful content
+- **Image Verification**: Reverse image search capabilities for authenticity checking
+- **Comprehensive Analysis**: Protocol security, keyword detection, reachability, fact-checking, and news credibility
+- **Clean Architecture Implementation**: Modular design with repository pattern and use cases
 
 ### 👥 Community Module
 - **Social Feed**: Real-time community posts and discussions
@@ -38,37 +45,119 @@ A comprehensive media literacy education and fact-checking platform designed spe
 - **Knowledge Sharing**: Collaborative fact-checking and verification
 - **Elegant UI**: Sophisticated animations and micro-interactions
 - **User Statistics**: Track community engagement and contributions
+- **Admin Moderation**: Content moderation and user management capabilities
+- **Clean Architecture Implementation**: Full feature separation with proper state management
+
+### 🛠️ Administrative Features
+- **User Management**: Admin dashboard for user account oversight
+- **Content Moderation**: Tools for monitoring and managing community content
+- **System Analytics**: Comprehensive metrics and usage statistics
+- **Activity Logging**: Detailed audit trails for administrative actions
+- **Role-Based Access**: Secure admin access with proper authorization
+- **Real-time Monitoring**: Live dashboard with system health indicators
+- **Reports Generation**: Automated reporting on user activities and system performance
+- **User Permissions Management**: Fine-grained control over user roles and capabilities
 
 ### 📊 Dashboard & Analytics
 - **User Progress**: Comprehensive learning progress tracking
 - **Statistics Overview**: Personal and community engagement metrics
 - **Achievement Gallery**: Visual representation of earned badges and milestones
 - **Settings Management**: Customizable app preferences and privacy controls
+- **Quick Navigation**: Direct access to all major app features
+- **Admin Access**: Role-based administrative dashboard integration
+- **Enhanced Visualization**: Improved charts and graphs for better data interpretation
 
 ## 🏗️ Architecture
 
 ### Technology Stack
-- **Frontend**: Flutter (Dart)
+- **Frontend**: Flutter (Dart 3.9.0) with Material Design 3
 - **Backend**: Firebase (Authentication, Firestore, Cloud Storage)
 - **Administrative Server**: Node.js with Express
-- **State Management**: Built-in Flutter state management
-- **Architecture Pattern**: Feature-first modular architecture
+- **State Management**: Flutter BLoC Pattern
+- **Dependency Injection**: GetIt Service Locator
+- **Architecture Pattern**: Clean Architecture with Feature-based Modular Design
+- **Error Handling**: Structured Exception/Failure Pattern (Exceptions in Data Layer, Failures in Domain Layer)
 
 ### Project Structure
 ```
 lib/
-├── features/
-│   ├── auth/           # Authentication screens and services
-│   ├── check/          # Link verification and security features
-│   ├── community/      # Social features and interactions
-│   ├── learn/          # Educational content and quizzes
-│   └── users/          # User profiles and dashboard
-├── common/
-│   └── widgets/        # Reusable UI components
-├── constants/          # App-wide constants
-├── services/           # Global services (clipboard, sharing)
-└── screens/            # Top-level screens
+├── core/                    # Core infrastructure and shared utilities
+│   ├── constants/           # Application-wide constants
+│   ├── di/                  # Dependency injection setup
+│   ├── error/               # Error handling patterns
+│   ├── errors/              # Exception and failure definitions
+│   ├── network/             # Network layer abstractions
+│   ├── theme/               # App-wide theming and styling
+│   ├── utils/               # Utility functions and helpers
+│   └── widgets/             # Reusable UI components
+├── features/                # Feature modules (Clean Architecture)
+│   ├── auth/               # Authentication system
+│   │   ├── data/           # Data layer (models, datasources, repositories)
+│   │   ├── di/             # Feature-specific dependency injection
+│   │   ├── domain/         # Domain layer (entities, use cases, repositories)
+│   │   ├── presentation/   # Presentation layer (BLoC, screens, widgets)
+│   │   └── screens/        # UI screens
+│   ├── check/              # Link and content verification
+│   │   ├── data/           # Data layer implementation
+│   │   ├── di/             # Dependency injection
+│   │   ├── domain/         # Domain logic and entities
+│   │   ├── presentation/   # UI and state management
+│   │   └── screens/        # Verification screens
+│   ├── community/          # Social features
+│   │   ├── data/           # Data implementations
+│   │   ├── di/             # Feature injection
+│   │   ├── domain/         # Community entities and logic
+│   │   ├── presentation/   # Presentation layer
+│   │   └── screens/        # Community UI
+│   ├── learn/              # Educational content
+│   │   ├── data/           # Lesson data management
+│   │   ├── di/             # Learn feature injection
+│   │   ├── domain/         # Learning entities and use cases
+│   │   ├── presentation/   # Learning UI and state
+│   │   └── screens/        # Educational screens
+│   ├── admin/              # Administrative features
+│   │   ├── models/         # Admin data models
+│   │   ├── screens/        # Admin UI screens
+│   │   ├── services/       # Admin services
+│   │   └── widgets/        # Admin UI components
+│   └── users/              # User profile and dashboard
+│       ├── dashboard/      # User dashboard implementation
+│       ├── data/           # User data models and services
+│       ├── di/             # User feature injection
+│       ├── domain/         # User entities and use cases
+│       └── presentation/   # User UI and state management
+├── common/                  # Shared components
+│   └── widgets/             # Common UI widgets
+├── screens/                 # Top-level application screens
+├── services/                # Global services
+└── widgets/                 # Application widgets
 ```
+
+### Clean Architecture Implementation
+Each feature follows the Clean Architecture pattern with clear separation of concerns:
+
+1. **Domain Layer**: Contains business logic, entities, and repository interfaces
+2. **Data Layer**: Implements data sources, models, and repository implementations
+3. **Presentation Layer**: Handles UI, state management (BLoC), and user interactions
+4. **Dependency Injection**: Manages service registration and retrieval
+
+#### Domain Layer
+Contains the core business logic and entities that represent the problem domain:
+- Entities: Core data structures with business rules
+- Use Cases: Application-specific business logic
+- Repositories: Abstract contracts for data access
+
+#### Data Layer
+Implements the data access mechanisms:
+- Models: Data transfer objects that map to/from entities
+- Data Sources: Concrete implementations for local/remote data access
+- Repositories: Implementations of domain repository contracts
+
+#### Presentation Layer
+Handles UI rendering and user interaction:
+- BLoC/Cubit: State management for reactive UI updates
+- Screens: Top-level UI components
+- Widgets: Reusable UI components for the feature
 
 ### Data Flow
 ```mermaid
@@ -82,6 +171,9 @@ graph TB
     F --> H[Community Posts]
     F --> I[User Progress]
     F --> J[Learning Content]
+    G --> K[Admin Dashboard]
+    G --> L[Content Moderation]
+    G --> M[System Analytics]
 ```
 
 ## 🚀 Getting Started
@@ -145,6 +237,11 @@ Ensure your Firebase project has the following services enabled:
 - `dio: ^5.3.2` - Advanced HTTP client
 - `image_picker: ^1.0.4` - Image selection functionality
 - `crypto: ^3.0.3` - Cryptographic operations
+- `flutter_bloc: ^8.1.1` - State management with BLoC pattern
+- `get_it: ^7.6.0` - Dependency injection service locator
+- `equatable: ^2.0.5` - Value equality comparisons
+- `fpdart: ^1.1.0` - Functional programming utilities
+- `intl: ^0.19.0` - Internationalization and formatting
 
 ### Development Dependencies
 - `flutter_test` - Testing framework
@@ -179,14 +276,20 @@ flutter build ios --release
 - **Data Validation**: Input sanitization and validation
 - **Firestore Security Rules**: Backend data access control
 - **Content Verification**: Real-time link and content authenticity checking
+- **Role-Based Access Control**: Admin features secured with proper authorization
+- **Secure Data Transmission**: HTTPS encryption for all network communications
+- **Input Sanitization**: Protection against injection attacks and malicious content
 
 ## 🎨 UI/UX Design
 
-- **Material Design**: Consistent with Android design guidelines
+- **Material Design 3**: Latest Material Design guidelines implementation
 - **Sophisticated Animations**: Micro-interactions and smooth transitions
 - **Responsive Layout**: Adapts to different screen sizes
 - **Accessibility**: Support for screen readers and assistive technologies
 - **Dark Mode**: Automatic theme switching based on system preferences
+- **Consistent Theming**: Unified color scheme and typography across features
+- **Intuitive Navigation**: User-friendly interface with clear pathways
+- **Visual Feedback**: Immediate response to user actions
 
 ## 📖 User Journey
 
@@ -197,16 +300,20 @@ flutter build ios --release
 5. **Verification**: Check links and content for authenticity
 6. **Community**: Engage with other users, share knowledge
 7. **Profile**: Manage settings, view achievements, track statistics
+8. **Admin**: (For authorized users) Access administrative features and system monitoring
 
 ## 🤝 Contributing
 
 This is a private project. For development team members:
 
-1. Follow the established code style and architecture patterns
+1. Follow the established Clean Architecture patterns
 2. Write tests for new features
 3. Update documentation for any changes
 4. Ensure Firebase security rules are properly configured
 5. Test on both Android and iOS platforms
+6. Maintain consistent code style and naming conventions
+7. Use the established dependency injection patterns
+8. Follow the structured error handling approach
 
 ## 📄 License
 

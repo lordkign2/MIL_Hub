@@ -19,43 +19,45 @@ Future<void> initAuthDependencies() async {
   // Repositories
   sl.registerSingleton<AuthRepository>(
     AuthRepositoryImpl(
-      remoteDataSource: sl<AuthRemoteDataSource>(),
-      networkInfo: sl<NetworkInfo>(),
+      remoteDataSource: sl.get<AuthRemoteDataSource>(),
+      networkInfo: sl.get<NetworkInfo>(),
     ),
   );
 
   // Use cases
   sl.registerSingleton<SignUpWithEmailUseCase>(
-    SignUpWithEmailUseCase(sl<AuthRepository>()),
+    SignUpWithEmailUseCase(sl.get<AuthRepository>()),
   );
 
   sl.registerSingleton<SignInWithEmailUseCase>(
-    SignInWithEmailUseCase(sl<AuthRepository>()),
+    SignInWithEmailUseCase(sl.get<AuthRepository>()),
   );
 
   sl.registerSingleton<SignInWithGoogleUseCase>(
-    SignInWithGoogleUseCase(sl<AuthRepository>()),
+    SignInWithGoogleUseCase(sl.get<AuthRepository>()),
   );
 
-  sl.registerSingleton<SignOutUseCase>(SignOutUseCase(sl<AuthRepository>()));
+  sl.registerSingleton<SignOutUseCase>(
+    SignOutUseCase(sl.get<AuthRepository>()),
+  );
 
   sl.registerSingleton<GetCurrentUserUseCase>(
-    GetCurrentUserUseCase(sl<AuthRepository>()),
+    GetCurrentUserUseCase(sl.get<AuthRepository>()),
   );
 
   sl.registerSingleton<GetAuthStateStreamUseCase>(
-    GetAuthStateStreamUseCase(sl<AuthRepository>()),
+    GetAuthStateStreamUseCase(sl.get<AuthRepository>()),
   );
 
   // BLoC
   sl.registerFactory<AuthBloc>(
     () => AuthBloc(
-      signUpWithEmail: sl<SignUpWithEmailUseCase>(),
-      signInWithEmail: sl<SignInWithEmailUseCase>(),
-      signInWithGoogle: sl<SignInWithGoogleUseCase>(),
-      signOut: sl<SignOutUseCase>(),
-      getCurrentUser: sl<GetCurrentUserUseCase>(),
-      getAuthStateStream: sl<GetAuthStateStreamUseCase>(),
+      signUpWithEmail: sl.get<SignUpWithEmailUseCase>(),
+      signInWithEmail: sl.get<SignInWithEmailUseCase>(),
+      signInWithGoogle: sl.get<SignInWithGoogleUseCase>(),
+      signOut: sl.get<SignOutUseCase>(),
+      getCurrentUser: sl.get<GetCurrentUserUseCase>(),
+      getAuthStateStream: sl.get<GetAuthStateStreamUseCase>(),
     ),
   );
 }

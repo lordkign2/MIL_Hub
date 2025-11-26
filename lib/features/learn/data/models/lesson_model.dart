@@ -55,7 +55,7 @@ class LessonModel extends LessonEntity {
       'content': content,
       'icon': icon,
       'progress': progress,
-      'questions': questions.map((q) => q.toJson()).toList(),
+      'questions': questions.map((q) => (q as QuestionModel).toJson()).toList(),
       'color': color,
     };
   }
@@ -69,7 +69,7 @@ class LessonModel extends LessonEntity {
       content: content,
       icon: icon,
       progress: progress,
-      questions: questions.map((q) => q.toEntity()).toList(),
+      questions: questions.map((q) => (q as QuestionModel).toEntity()).toList(),
       color: color,
     );
   }

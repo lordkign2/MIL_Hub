@@ -55,14 +55,14 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
       );
 
       if (userCredential.user == null) {
-        throw const AuthException('Failed to create user');
+        throw const AuthException(message: 'Failed to create user');
       }
 
       return UserModel.fromFirebaseUser(userCredential.user!);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(_mapFirebaseAuthExceptionMessage(e));
+      throw AuthException(message: _mapFirebaseAuthExceptionMessage(e));
     } catch (e) {
-      throw AuthException('An unexpected error occurred: $e');
+      throw AuthException(message: 'An unexpected error occurred: $e');
     }
   }
 
@@ -78,14 +78,14 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
       );
 
       if (userCredential.user == null) {
-        throw const AuthException('Failed to sign in');
+        throw const AuthException(message: 'Failed to sign in');
       }
 
       return UserModel.fromFirebaseUser(userCredential.user!);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(_mapFirebaseAuthExceptionMessage(e));
+      throw AuthException(message: _mapFirebaseAuthExceptionMessage(e));
     } catch (e) {
-      throw AuthException('An unexpected error occurred: $e');
+      throw AuthException(message: 'An unexpected error occurred: $e');
     }
   }
 
@@ -96,7 +96,7 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        throw const AuthException('Google sign in was cancelled');
+        throw const AuthException(message: 'Google sign in was cancelled');
       }
 
       // Obtain the auth details from the request
@@ -115,14 +115,14 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
       );
 
       if (userCredential.user == null) {
-        throw const AuthException('Failed to sign in with Google');
+        throw const AuthException(message: 'Failed to sign in with Google');
       }
 
       return UserModel.fromFirebaseUser(userCredential.user!);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(_mapFirebaseAuthExceptionMessage(e));
+      throw AuthException(message: _mapFirebaseAuthExceptionMessage(e));
     } catch (e) {
-      throw AuthException('Google sign in failed: $e');
+      throw AuthException(message: 'Google sign in failed: $e');
     }
   }
 
@@ -131,7 +131,7 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
     try {
       await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
     } catch (e) {
-      throw AuthException('Failed to sign out: $e');
+      throw AuthException(message: 'Failed to sign out: $e');
     }
   }
 
@@ -143,7 +143,7 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
 
   @override
   Stream<UserModel?> get authStateChanges {
-    return _firebaseAuth.authStateChanges().map((user) {
+    return _firebaseAuth.authStateChanges().map((User? user) {
       return user != null ? UserModel.fromFirebaseUser(user) : null;
     });
   }
@@ -156,9 +156,9 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(_mapFirebaseAuthExceptionMessage(e));
+      throw AuthException(message: _mapFirebaseAuthExceptionMessage(e));
     } catch (e) {
-      throw AuthException('Failed to send password reset email: $e');
+      throw AuthException(message: 'Failed to send password reset email: $e');
     }
   }
 
@@ -170,23 +170,30 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) {
-        throw const AuthException('No user is currently signed in');
+        throw const AuthException(message: 'No user is currently signed in');
       }
 
-      await user.updateDisplayName(displayName);
+      // Update profile information
+      if (displayName != null) {
+        await user.updateDisplayName(displayName);
+      }
       if (photoUrl != null) {
         await user.updatePhotoURL(photoUrl);
       }
 
       // Reload user to get updated data
       await user.reload();
-      final updatedUser = _firebaseAuth.currentUser!;
+      final updatedUser = _firebaseAuth.currentUser;
+
+      if (updatedUser == null) {
+        throw const AuthException(message: 'Failed to update profile');
+      }
 
       return UserModel.fromFirebaseUser(updatedUser);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(_mapFirebaseAuthExceptionMessage(e));
+      throw AuthException(message: _mapFirebaseAuthExceptionMessage(e));
     } catch (e) {
-      throw AuthException('Failed to update profile: $e');
+      throw AuthException(message: 'Failed to update profile: $e');
     }
   }
 
@@ -195,14 +202,14 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) {
-        throw const AuthException('No user is currently signed in');
+        throw const AuthException(message: 'No user is currently signed in');
       }
 
       await user.delete();
     } on FirebaseAuthException catch (e) {
-      throw AuthException(_mapFirebaseAuthExceptionMessage(e));
+      throw AuthException(message: _mapFirebaseAuthExceptionMessage(e));
     } catch (e) {
-      throw AuthException('Failed to delete account: $e');
+      throw AuthException(message: 'Failed to delete account: $e');
     }
   }
 

@@ -16,14 +16,14 @@ class SignInWithEmailUseCase {
     if (email.trim().isEmpty) {
       return (
         user: null,
-        failure: const ValidationFailure('Email is required'),
+        failure: const ValidationFailure(message: 'Email is required'),
       );
     }
 
     if (password.trim().isEmpty) {
       return (
         user: null,
-        failure: const ValidationFailure('Password is required'),
+        failure: const ValidationFailure(message: 'Password is required'),
       );
     }
 

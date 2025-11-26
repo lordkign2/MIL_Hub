@@ -1,45 +1,47 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutter/Dart general
 .dart_tool/
-.flutter-plugins-dependencies
-.pub-cache/
+.packages
 .pub/
-/build/
-/coverage/
+build/
+flutter_export_environment.sh
 
-# Symbolication related
-app.*.symbols
+# IDEs and tools
+.idea/
+.vscode/
+*.iml
 
-# Obfuscation related
-app.*.map.json
+# Generated plugin registrant
+generated_plugin_registrant.dart
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Android specific
+android/.gradle/
+android/app/build/
+android/local.properties
+android/key.properties
+
+# Firebase config files (⚠️ depends on your policy)
+# These files can safely be included if you don't mind them being public,
+# but exclude if they contain sensitive project info or you use multiple environments.
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Fastlane, if used
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+.env.*
+firebase-debug.log
+
+# Crashlytics / Analytics
+crashlytics-build.properties

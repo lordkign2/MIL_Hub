@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/user_profile_model.dart';
 import '../services/user_service.dart';
+import '../../admin/widgets/admin_access_widget.dart';
+import '../../learn/screens/learn_screen.dart';
+import '../../community/screens/community_screen.dart';
+import '../../check/screens/check_screen.dart';
 
 class EnhancedUserDashboard extends StatefulWidget {
   final Color themeColor;
@@ -156,8 +160,11 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
     return Scaffold(
       backgroundColor: Colors.black,
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           _buildDashboardHeader(),
+          _buildAdminAccessSection(),
+          _buildQuickNavigationSection(),
           _buildQuickStats(),
           _buildInsightsSection(),
           _buildActivitySection(),
@@ -469,59 +476,108 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Quick Overview',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Stats Grid
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: _buildStatCard(
-                            'Current Streak',
-                            '${_analytics?.currentStreak ?? 0}',
-                            Icons.local_fire_department_rounded,
-                            Colors.orange,
+                        const Text(
+                          'Learning Progress',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildStatCard(
-                            'Activities',
-                            '${_analytics?.totalActivities ?? 0}',
-                            Icons.trending_up_rounded,
-                            Colors.green,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: widget.themeColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: widget.themeColor.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.trending_up_rounded,
+                                color: widget.themeColor,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Level ${_analytics?.level ?? 1}',
+                                style: TextStyle(
+                                  color: widget.themeColor,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 16),
 
-                    const SizedBox(height: 12),
-
-                    Row(
+                    // Enhanced Stats Grid with better spacing
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1.4,
                       children: [
-                        Expanded(
-                          child: _buildStatCard(
-                            'Time Spent',
-                            '${(_analytics?.totalTimeSpent ?? 0) ~/ 60}h',
-                            Icons.schedule_rounded,
-                            Colors.blue,
-                          ),
+                        _buildEnhancedStatCard(
+                          'Current Streak',
+                          '${_analytics?.currentStreak ?? 0}',
+                          'days',
+                          Icons.local_fire_department_rounded,
+                          Colors.orange,
+                          _analytics?.currentStreak != null &&
+                                  _analytics!.currentStreak > 0
+                              ? '+${_analytics!.currentStreak}'
+                              : null,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildStatCard(
-                            'Avg Score',
-                            '${((_analytics?.averageScore ?? 0) * 100).toInt()}%',
-                            Icons.emoji_events_rounded,
-                            Colors.amber,
-                          ),
+                        _buildEnhancedStatCard(
+                          'Activities',
+                          '${_analytics?.totalActivities ?? 0}',
+                          'completed',
+                          Icons.trending_up_rounded,
+                          Colors.green,
+                          _analytics?.weeklyActivities != null &&
+                                  _analytics!.weeklyActivities > 0
+                              ? '+${_analytics!.weeklyActivities} this week'
+                              : null,
+                        ),
+                        _buildEnhancedStatCard(
+                          'Time Spent',
+                          '${(_analytics?.totalTimeSpent ?? 0) ~/ 60}',
+                          'hours',
+                          Icons.schedule_rounded,
+                          Colors.blue,
+                          _analytics?.totalTimeSpent != null &&
+                                  _analytics!.totalTimeSpent > 0
+                              ? '${_analytics!.totalTimeSpent % 60}m extra'
+                              : null,
+                        ),
+                        _buildEnhancedStatCard(
+                          'Avg Score',
+                          '${((_analytics?.averageScore ?? 0) * 100).toInt()}',
+                          'percent',
+                          Icons.emoji_events_rounded,
+                          Colors.amber,
+                          _analytics?.averageScore != null &&
+                                  _analytics!.averageScore > 0.8
+                              ? 'Excellent!'
+                              : _analytics?.averageScore != null &&
+                                    _analytics!.averageScore > 0.6
+                              ? 'Good job!'
+                              : null,
                         ),
                       ],
                     ),
@@ -573,6 +629,108 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
               label,
               style: const TextStyle(color: Colors.white70, fontSize: 12),
               textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEnhancedStatCard(
+    String label,
+    String value,
+    String unit,
+    IconData icon,
+    Color color,
+    String? subtitle,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        _navigateToStatistics();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withOpacity(0.3),
+              color.withOpacity(0.1),
+              Colors.black.withOpacity(0.7),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.4), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                if (subtitle != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              value,
+              style: TextStyle(
+                color: color,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              unit,
+              style: TextStyle(
+                color: color.withOpacity(0.7),
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
@@ -882,61 +1040,92 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Quick Actions',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Account Management',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.settings_rounded,
+                                color: Colors.grey[400],
+                                size: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Manage',
+                                style: TextStyle(
+                                  color: Colors.grey[400],
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 
-                    Row(
+                    // Enhanced Actions Grid
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 2.2,
                       children: [
-                        Expanded(
-                          child: _buildActionButton(
-                            'Edit Profile',
-                            Icons.edit_rounded,
-                            Colors.blue,
-                            () => _navigateToEditProfile(),
-                          ),
+                        _buildEnhancedActionButton(
+                          'Edit Profile',
+                          'Update your information',
+                          Icons.edit_rounded,
+                          Colors.blue,
+                          () => _navigateToEditProfile(),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildActionButton(
-                            'Achievements',
-                            Icons.emoji_events_rounded,
-                            Colors.amber,
-                            () => _navigateToAchievements(),
-                          ),
+                        _buildEnhancedActionButton(
+                          'Achievements',
+                          'View your badges',
+                          Icons.emoji_events_rounded,
+                          Colors.amber,
+                          () => _navigateToAchievements(),
+                        ),
+                        _buildEnhancedActionButton(
+                          'Statistics',
+                          'Detailed analytics',
+                          Icons.analytics_rounded,
+                          Colors.green,
+                          () => _navigateToStatistics(),
+                        ),
+                        _buildEnhancedActionButton(
+                          'Privacy',
+                          'Security settings',
+                          Icons.security_rounded,
+                          Colors.red,
+                          () => _navigateToPrivacy(),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 12),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildActionButton(
-                            'Statistics',
-                            Icons.analytics_rounded,
-                            Colors.green,
-                            () => _navigateToStatistics(),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildActionButton(
-                            'Privacy',
-                            Icons.security_rounded,
-                            Colors.red,
-                            () => _navigateToPrivacy(),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Additional bottom spacing
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -988,6 +1177,82 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
     );
   }
 
+  Widget _buildEnhancedActionButton(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withOpacity(0.2),
+              color.withOpacity(0.1),
+              Colors.black.withOpacity(0.8),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.1),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: Colors.grey[400], fontSize: 10),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: color.withOpacity(0.6),
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String _formatActivityTime(DateTime timestamp) {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
@@ -1003,8 +1268,243 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
     }
   }
 
+  // New dashboard sections
+  Widget _buildAdminAccessSection() {
+    return SliverToBoxAdapter(
+      child: AnimatedBuilder(
+        animation: _cardsAnimation,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, 20 * (1 - _cardsAnimation.value)),
+            child: Opacity(
+              opacity: _cardsAnimation.value,
+              child: AdminAccessWidget(themeColor: widget.themeColor),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildQuickNavigationSection() {
+    return SliverToBoxAdapter(
+      child: AnimatedBuilder(
+        animation: _cardsAnimation,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, 25 * (1 - _cardsAnimation.value)),
+            child: Opacity(
+              opacity: _cardsAnimation.value,
+              child: Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Quick Access',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Navigation Cards Grid
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1.1,
+                      children: [
+                        _buildNavigationCard(
+                          'Learn',
+                          'Lessons & Quizzes',
+                          Icons.school_rounded,
+                          Colors.purple,
+                          () => _navigateToLearn(),
+                        ),
+                        _buildNavigationCard(
+                          'Community',
+                          'Posts & Discussions',
+                          Icons.people_rounded,
+                          Colors.blue,
+                          () => _navigateToCommunity(),
+                        ),
+                        _buildNavigationCard(
+                          'Check',
+                          'Verify Content',
+                          Icons.search_rounded,
+                          Colors.indigo,
+                          () => _navigateToCheck(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildNavigationCard(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        onTap();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withOpacity(0.3),
+              color.withOpacity(0.1),
+              Colors.black.withOpacity(0.6),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.4), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(color: Colors.grey[400], fontSize: 10),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // Navigation methods
+  void _navigateToLearn() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => LearnScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOutCubic;
+
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
+  }
+
+  void _navigateToCommunity() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            CommunityScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOutCubic;
+
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
+  }
+
+  void _navigateToCheck() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => CheckScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOutCubic;
+
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
+  }
+
   void _navigateToSettings() {
+    HapticFeedback.lightImpact();
     // TODO: Navigate to settings screen
     print('Navigate to settings');
   }

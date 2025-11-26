@@ -16,7 +16,7 @@ class SignUpWithEmailUseCase {
     if (!_isValidEmail(email)) {
       return (
         user: null,
-        failure: const ValidationFailure('Invalid email format'),
+        failure: const ValidationFailure(message: 'Invalid email format'),
       );
     }
 
@@ -25,7 +25,7 @@ class SignUpWithEmailUseCase {
       return (
         user: null,
         failure: const ValidationFailure(
-          'Password must be at least 8 characters long',
+          message: 'Password must be at least 8 characters long',
         ),
       );
     }

@@ -1,18 +1,28 @@
+import 'package:equatable/equatable.dart';
 import '../../domain/entities/user_entity.dart';
 
 /// Base class for all authentication states
-abstract class AuthState {
+abstract class AuthState extends Equatable {
   const AuthState();
+
+  @override
+  List<Object?> get props => [];
 }
 
 /// Initial state
 class AuthInitial extends AuthState {
   const AuthInitial();
+
+  @override
+  List<Object?> get props => [];
 }
 
 /// Loading state
 class AuthLoading extends AuthState {
   const AuthLoading();
+
+  @override
+  List<Object?> get props => [];
 }
 
 /// Authenticated state
@@ -22,19 +32,15 @@ class AuthAuthenticated extends AuthState {
   const AuthAuthenticated({required this.user});
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AuthAuthenticated &&
-          runtimeType == other.runtimeType &&
-          user == other.user;
-
-  @override
-  int get hashCode => user.hashCode;
+  List<Object?> get props => [user];
 }
 
 /// Unauthenticated state
 class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
+
+  @override
+  List<Object?> get props => [];
 }
 
 /// Error state
@@ -44,14 +50,7 @@ class AuthError extends AuthState {
   const AuthError({required this.message});
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AuthError &&
-          runtimeType == other.runtimeType &&
-          message == other.message;
-
-  @override
-  int get hashCode => message.hashCode;
+  List<Object?> get props => [message];
 }
 
 /// Success state for actions that don't return user data
@@ -61,12 +60,5 @@ class AuthActionSuccess extends AuthState {
   const AuthActionSuccess({required this.message});
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AuthActionSuccess &&
-          runtimeType == other.runtimeType &&
-          message == other.message;
-
-  @override
-  int get hashCode => message.hashCode;
+  List<Object?> get props => [message];
 }

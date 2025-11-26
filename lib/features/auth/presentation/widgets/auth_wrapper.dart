@@ -32,13 +32,17 @@ class _AuthWrapperState extends State<AuthWrapper> {
         final state = snapshot.data!;
 
         return switch (state) {
-          AuthInitial() || AuthLoading() => const Scaffold(
+          AuthInitial() => const Scaffold(
+            body: LoadingIndicator(message: 'Loading...'),
+          ),
+          AuthLoading() => const Scaffold(
             body: LoadingIndicator(message: 'Loading...'),
           ),
           AuthAuthenticated() => const HomeScreen(),
           AuthUnauthenticated() => const LandingPage(),
           AuthError() => const LandingPage(),
           AuthActionSuccess() => const HomeScreen(),
+          _ => const Scaffold(body: LoadingIndicator(message: 'Loading...')),
         };
       },
     );

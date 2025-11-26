@@ -15,7 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Middleware: verify Firebase token
+// Middleware: verify Firebase token an dparse user into req.user
 async function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -52,7 +52,7 @@ async function verifyAdmin(req, res, next) {
 }
 
 // =============================================================================
-// USER PROGRESS APIs (EXISTING)
+// USER PROGRESS APIs (might be handled with firebase and flutter)
 // =============================================================================
 
 // Example protected API: get user progress
