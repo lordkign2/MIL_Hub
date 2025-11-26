@@ -57,6 +57,7 @@ A comprehensive media literacy education and fact-checking platform designed spe
 - **Real-time Monitoring**: Live dashboard with system health indicators
 - **Reports Generation**: Automated reporting on user activities and system performance
 - **User Permissions Management**: Fine-grained control over user roles and capabilities
+- **[Admin Dashboard Access Guide](docs/ADMIN_DASHBOARD_ACCESS.md)**: Detailed documentation on accessing and using the admin dashboard
 
 ### 📊 Dashboard & Analytics
 - **User Progress**: Comprehensive learning progress tracking
@@ -160,7 +161,7 @@ Handles UI rendering and user interaction:
 - Widgets: Reusable UI components for the feature
 
 ### Data Flow
-```mermaid
+```
 graph TB
     A[Flutter App] --> B[Firebase Auth]
     A --> C[Cloud Firestore]
