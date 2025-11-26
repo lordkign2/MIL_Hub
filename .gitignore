@@ -1,9 +1,11 @@
 # Flutter/Dart general
 .dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
 .packages
 .pub/
 build/
-flutter_export_environment.sh
+generated_plugin_registrant.dart
 
 # IDEs and tools
 .idea/
@@ -22,12 +24,27 @@ android/.gradle/
 android/app/build/
 android/local.properties
 android/key.properties
+android/app/google-services.json
+android/gradlew
+android/gradlew.bat
+android/build/
+android/gradle/wrapper/gradle-wrapper.jar
+android/mil_hub_android.iml
+
+# iOS specific
+ios/Runner/GoogleService-Info.plist
+ios/Flutter/App.framework/
+ios/Flutter/Flutter.framework/
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/.symlinks/
 
 # Firebase config files (⚠️ depends on your policy)
 # These files can safely be included if you don't mind them being public,
 # but exclude if they contain sensitive project info or you use multiple environments.
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
+# android/app/google-services.json (already listed above)
+# ios/Runner/GoogleService-Info.plist (already listed above)
+server/serviceAccountKey.json
 
 # Fastlane, if used
 fastlane/report.xml
@@ -45,3 +62,26 @@ firebase-debug.log
 
 # Crashlytics / Analytics
 crashlytics-build.properties
+
+#Firebase Hosting Cache
+.firebase/
+firebase.json
+storage.rules
+firestore.rules
+firestore.indexes.json
+
+# Server node_modules
+server/node_modules/
+
+# IntelliJ/Android Studio
+*.iws
+out/
+
+# VS Code
+.vscode/
+
+# Flutter build artifacts
+**/build/
+
+# Mil Hub specific files that should not be tracked
+mil_hub.iml
