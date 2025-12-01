@@ -51,7 +51,7 @@ class _CommunityScreenState extends State<CommunityScreen>
 
   void _setupScrollListener() {
     _scrollController.addListener(() {
-      // Load more posts when near bottom
+      // Load more posts only when scrolling down and near bottom
       if (_scrollController.position.pixels >
           _scrollController.position.maxScrollExtent - 1000) {
         _loadMorePosts();
@@ -183,8 +183,10 @@ class _CommunityScreenState extends State<CommunityScreen>
   }
 
   Widget _buildSliverAppBar() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: isSmallScreen ? 100 : 120,
       floating: true,
       pinned: true,
       backgroundColor: Colors.transparent,
@@ -192,24 +194,26 @@ class _CommunityScreenState extends State<CommunityScreen>
         height: double.infinity,
         width: double.infinity,
         child: Container(
-          padding: const EdgeInsets.only(
-            top: 100,
-            left: 13,
-            right: 13,
-            bottom: 16,
+          padding: EdgeInsets.only(
+            top: isSmallScreen ? 80 : 100,
+            left: isSmallScreen ? 10 : 13,
+            right: isSmallScreen ? 10 : 13,
+            bottom: isSmallScreen ? 12 : 16,
           ),
           decoration: const BoxDecoration(
             gradient: GlobalVariables.appBarGradient,
           ),
 
-          child: const Text(
+          child: Text(
             '👥 Community Hub',
             style: TextStyle(
-                      color: Colors.white, 
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: isSmallScreen ? 18 : 20,
+            ),
             textAlign: TextAlign.center,
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
@@ -223,6 +227,7 @@ class _CommunityScreenState extends State<CommunityScreen>
           icon: Icon(
             _showSearch ? Icons.search_off : Icons.search,
             color: Colors.white,
+            size: isSmallScreen ? 20 : 24,
           ),
         ),
         IconButton(
@@ -230,16 +235,22 @@ class _CommunityScreenState extends State<CommunityScreen>
             // Show filter options
             _showFilterDialog();
           },
-          icon: const Icon(Icons.filter_list, color: Colors.white),
+          icon: Icon(
+            Icons.filter_list,
+            color: Colors.white,
+            size: isSmallScreen ? 20 : 24,
+          ),
         ),
       ],
     );
   }
 
   Widget _buildSearchSection() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return SliverToBoxAdapter(
       child: Container(
-        margin: const EdgeInsets.all(16),
+        margin: EdgeInsets.all(isSmallScreen ? 12 : 16),
         decoration: BoxDecoration(
           color: Colors.grey[900],
           borderRadius: BorderRadius.circular(12),
@@ -249,12 +260,19 @@ class _CommunityScreenState extends State<CommunityScreen>
           controller: _searchController,
           onChanged: _onSearchChanged,
           style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'Search posts...',
-            hintStyle: TextStyle(color: Colors.grey),
-            prefixIcon: Icon(Icons.search, color: Colors.grey),
+            hintStyle: const TextStyle(color: Colors.grey),
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.grey,
+              size: isSmallScreen ? 18 : 20,
+            ),
             border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: isSmallScreen ? 12 : 16,
+              vertical: isSmallScreen ? 10 : 12,
+            ),
           ),
         ),
       ),
@@ -262,10 +280,12 @@ class _CommunityScreenState extends State<CommunityScreen>
   }
 
   Widget _buildTrendingTags() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return SliverToBoxAdapter(
       child: Container(
-        height: 60,
-        margin: const EdgeInsets.symmetric(vertical: 8),
+        height: isSmallScreen ? 50 : 60,
+        margin: EdgeInsets.symmetric(vertical: isSmallScreen ? 6 : 8),
         child: FutureBuilder<List<String>>(
           future: CommunityService.getTrendingTags(),
           builder: (context, snapshot) {
@@ -276,14 +296,16 @@ class _CommunityScreenState extends State<CommunityScreen>
             final tags = snapshot.data!;
             return ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallScreen ? 12 : 16,
+              ),
               itemCount: tags.length,
               itemBuilder: (context, index) {
                 final tag = tags[index];
                 final isSelected = _selectedTags.contains(tag);
 
                 return Container(
-                  margin: const EdgeInsets.only(right: 8),
+                  margin: EdgeInsets.only(right: isSmallScreen ? 6 : 8),
                   child: FilterChip(
                     selected: isSelected,
                     label: Text(
@@ -293,12 +315,18 @@ class _CommunityScreenState extends State<CommunityScreen>
                         fontWeight: isSelected
                             ? FontWeight.bold
                             : FontWeight.normal,
+                        fontSize: isSmallScreen ? 12 : 14,
                       ),
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     onSelected: (_) => _toggleTag(tag),
                     backgroundColor: Colors.grey[800],
                     selectedColor: Colors.blue,
                     checkmarkColor: Colors.white,
+                    visualDensity: isSmallScreen
+                        ? VisualDensity.compact
+                        : VisualDensity.standard,
                   ),
                 );
               },
@@ -343,6 +371,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                     Text(
                       'Error loading posts',
                       style: TextStyle(color: Colors.grey[400], fontSize: 16),
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     TextButton(
@@ -382,6 +412,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -389,6 +421,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                           ? 'Try adjusting your search or filters'
                           : 'Be the first to share something!',
                       style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if (_searchQuery.isEmpty && _selectedTags.isEmpty) ...[
                       const SizedBox(height: 24),
@@ -463,6 +497,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 20),
             const Text(
@@ -472,32 +508,50 @@ class _CommunityScreenState extends State<CommunityScreen>
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               children: [
                 FilterChip(
-                  label: const Text('All'),
+                  label: const Text(
+                    'All',
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   selected: true,
                   onSelected: (_) {},
                   backgroundColor: Colors.grey[800],
                   selectedColor: Colors.blue,
                 ),
                 FilterChip(
-                  label: const Text('Text'),
+                  label: const Text(
+                    'Text',
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   selected: false,
                   onSelected: (_) {},
                   backgroundColor: Colors.grey[800],
                 ),
                 FilterChip(
-                  label: const Text('Images'),
+                  label: const Text(
+                    'Images',
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   selected: false,
                   onSelected: (_) {},
                   backgroundColor: Colors.grey[800],
                 ),
                 FilterChip(
-                  label: const Text('Polls'),
+                  label: const Text(
+                    'Polls',
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   selected: false,
                   onSelected: (_) {},
                   backgroundColor: Colors.grey[800],
@@ -517,7 +571,11 @@ class _CommunityScreenState extends State<CommunityScreen>
                       });
                       Navigator.pop(context);
                     },
-                    child: const Text('Clear All'),
+                    child: const Text(
+                      'Clear All',
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -527,7 +585,11 @@ class _CommunityScreenState extends State<CommunityScreen>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                     ),
-                    child: const Text('Apply'),
+                    child: const Text(
+                      'Apply',
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
               ],

@@ -269,8 +269,13 @@ class _ElegantPostCardState extends State<ElegantPostCard>
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 12 : 16,
+        vertical: isSmallScreen ? 6 : 8,
+      ),
       decoration: BoxDecoration(
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(16),
@@ -295,8 +300,10 @@ class _ElegantPostCardState extends State<ElegantPostCard>
   }
 
   Widget _buildHeader() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       child: Row(
         children: [
           Hero(
@@ -309,18 +316,23 @@ class _ElegantPostCardState extends State<ElegantPostCard>
                     : null,
               ),
               child: CircleAvatar(
-                radius: 24,
+                // Responsive avatar size based on screen width
+                radius: MediaQuery.of(context).size.width > 400 ? 24 : 20,
                 backgroundImage: widget.post.authorPhoto != null
                     ? NetworkImage(widget.post.authorPhoto!)
                     : null,
                 backgroundColor: Colors.transparent,
                 child: widget.post.authorPhoto == null
-                    ? const Icon(Icons.person, color: Colors.white, size: 28)
+                    ? Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: MediaQuery.of(context).size.width > 400 ? 28 : 24,
+                      )
                     : null,
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: isSmallScreen ? 8 : 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,6 +346,8 @@ class _ElegantPostCardState extends State<ElegantPostCard>
                         fontSize: 16,
                         color: Colors.white,
                       ),
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if (widget.post.authorTitle != null) ...[
                       const SizedBox(width: 8),
@@ -355,6 +369,8 @@ class _ElegantPostCardState extends State<ElegantPostCard>
                             color: GlobalVariables.secondaryColor,
                             fontWeight: FontWeight.w500,
                           ),
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -382,18 +398,22 @@ class _ElegantPostCardState extends State<ElegantPostCard>
   }
 
   Widget _buildContent() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 12 : 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             widget.post.content,
-            style: const TextStyle(
-              fontSize: 15,
+            style: TextStyle(
+              fontSize: isSmallScreen ? 14 : 15,
               color: Colors.white,
               height: 1.4,
             ),
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
           ),
           if (widget.post.mediaUrls != null &&
               widget.post.mediaUrls!.isNotEmpty)
@@ -419,17 +439,22 @@ class _ElegantPostCardState extends State<ElegantPostCard>
   }
 
   Widget _buildTags() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 12 : 16,
+        vertical: isSmallScreen ? 6 : 8,
+      ),
       child: Wrap(
-        spacing: 8,
-        runSpacing: 4,
+        spacing: isSmallScreen ? 6 : 8,
+        runSpacing: isSmallScreen ? 3 : 4,
         children: widget.post.tags
             .map(
               (tag) => Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 10 : 12,
+                  vertical: isSmallScreen ? 3 : 4,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.blue.withOpacity(0.2),
@@ -437,11 +462,13 @@ class _ElegantPostCardState extends State<ElegantPostCard>
                 ),
                 child: Text(
                   tag,
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 11 : 12,
                     color: Colors.blueAccent,
                     fontWeight: FontWeight.w500,
                   ),
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             )
@@ -451,13 +478,15 @@ class _ElegantPostCardState extends State<ElegantPostCard>
   }
 
   Widget _buildActions() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       child: Column(
         children: [
           if (_likeCount > 0 || widget.post.commentCount > 0)
             _buildEngagementStats(),
-          const SizedBox(height: 12),
+          SizedBox(height: isSmallScreen ? 8 : 12),
           _buildActionButtons(),
         ],
       ),
@@ -465,26 +494,42 @@ class _ElegantPostCardState extends State<ElegantPostCard>
   }
 
   Widget _buildEngagementStats() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
       child: Row(
         children: [
           if (_likeCount > 0) ...[
-            Icon(Icons.favorite, size: 16, color: Colors.red[400]),
-            const SizedBox(width: 4),
+            Icon(
+              Icons.favorite,
+              size: isSmallScreen ? 14 : 16,
+              color: Colors.red[400],
+            ),
+            SizedBox(width: isSmallScreen ? 3 : 4),
             LikeCounterWidget(count: _likeCount, isLiked: _isLiked),
           ],
           const Spacer(),
           if (widget.post.commentCount > 0)
             Text(
               '${widget.post.commentCount} comments',
-              style: const TextStyle(fontSize: 13, color: Colors.grey),
+              style: TextStyle(
+                fontSize: isSmallScreen ? 12 : 13,
+                color: Colors.grey,
+              ),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
             ),
           if (widget.post.shareCount > 0) ...[
-            const SizedBox(width: 16),
+            SizedBox(width: isSmallScreen ? 12 : 16),
             Text(
               '${widget.post.shareCount} shares',
-              style: const TextStyle(fontSize: 13, color: Colors.grey),
+              style: TextStyle(
+                fontSize: isSmallScreen ? 12 : 13,
+                color: Colors.grey,
+              ),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ],
@@ -493,6 +538,83 @@ class _ElegantPostCardState extends State<ElegantPostCard>
   }
 
   Widget _buildActionButtons() {
+    final isSmallScreen = MediaQuery.of(context).size.width < 350;
+    final isVerySmallScreen = MediaQuery.of(context).size.width < 300;
+
+    // For very small screens, use a more compact layout
+    if (isVerySmallScreen) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          LikeAnimationWidget(
+            isLiked: _isLiked,
+            onTap: _handleLike,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: _isLiked ? Colors.red[400] : Colors.grey,
+                  size: 18,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Like',
+                  style: TextStyle(
+                    color: _isLiked ? Colors.red[400] : Colors.grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.chat_bubble_outline, color: Colors.grey, size: 18),
+              const SizedBox(height: 4),
+              Text(
+                'Comment',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+          AnimatedBuilder(
+            animation: _shareScaleAnimation,
+            builder: (context, child) => Transform.scale(
+              scale: _shareScaleAnimation.value,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.share_outlined, color: Colors.grey, size: 18),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Share',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Row(
       children: [
         Expanded(
@@ -505,22 +627,27 @@ class _ElegantPostCardState extends State<ElegantPostCard>
                 onTap: _handleLike,
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(
+                    vertical: isSmallScreen ? 10 : 12,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         _isLiked ? Icons.favorite : Icons.favorite_border,
                         color: _isLiked ? Colors.red[400] : Colors.grey,
-                        size: 20,
+                        size: isSmallScreen ? 18 : 20,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: isSmallScreen ? 6 : 8),
                       Text(
                         'Like',
                         style: TextStyle(
                           color: _isLiked ? Colors.red[400] : Colors.grey,
+                          fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w500,
                         ),
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -536,22 +663,27 @@ class _ElegantPostCardState extends State<ElegantPostCard>
               onTap: widget.onComment,
               borderRadius: BorderRadius.circular(8),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: const Row(
+                padding: EdgeInsets.symmetric(
+                  vertical: isSmallScreen ? 10 : 12,
+                ),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.chat_bubble_outline,
                       color: Colors.grey,
-                      size: 20,
+                      size: isSmallScreen ? 18 : 20,
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: isSmallScreen ? 6 : 8),
                     Text(
                       'Comment',
                       style: TextStyle(
                         color: Colors.grey,
+                        fontSize: isSmallScreen ? 13 : 14,
                         fontWeight: FontWeight.w500,
                       ),
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -570,22 +702,27 @@ class _ElegantPostCardState extends State<ElegantPostCard>
                   onTap: _handleShare,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: const Row(
+                    padding: EdgeInsets.symmetric(
+                      vertical: isSmallScreen ? 10 : 12,
+                    ),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.share_outlined,
                           color: Colors.grey,
-                          size: 20,
+                          size: isSmallScreen ? 18 : 20,
                         ),
-                        SizedBox(width: 8),
+                        SizedBox(width: isSmallScreen ? 6 : 8),
                         Text(
                           'Share',
                           style: TextStyle(
                             color: Colors.grey,
+                            fontSize: isSmallScreen ? 13 : 14,
                             fontWeight: FontWeight.w500,
                           ),
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
