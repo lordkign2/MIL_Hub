@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:math' as math;
 import '../models/user_progress_model.dart';
 
 class ProgressTrackingWidget extends StatefulWidget {
@@ -454,7 +452,7 @@ class _ProgressTrackingWidgetState extends State<ProgressTrackingWidget>
                   child: _buildAchievementItem(achievement),
                 ),
               );
-            }).toList(),
+            }),
           ],
         );
       },

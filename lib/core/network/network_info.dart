@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 /// Abstract interface for network connectivity checking
 abstract class NetworkInfo {

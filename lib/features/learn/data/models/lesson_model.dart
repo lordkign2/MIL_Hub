@@ -1,5 +1,4 @@
 import '../../domain/entities/lesson_entity.dart';
-import 'package:flutter/material.dart';
 
 /// Lesson model for data layer that extends the domain entity
 class LessonModel extends LessonEntity {

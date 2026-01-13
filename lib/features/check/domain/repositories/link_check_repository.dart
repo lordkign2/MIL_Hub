@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import '../entities/link_check_entity.dart';
 
 abstract class LinkCheckRepository {

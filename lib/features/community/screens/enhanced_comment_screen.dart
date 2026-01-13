@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../models/post_model.dart';
 import '../models/comment_model.dart';
 import '../services/community_service.dart';
 import '../widgets/elegant_post_card.dart';
 import '../widgets/elegant_comment_widget.dart';
 import '../widgets/elegant_comment_input.dart';
-import '../../../constants/global_variables.dart';
 
 class EnhancedCommentScreen extends StatefulWidget {
   final String postId;

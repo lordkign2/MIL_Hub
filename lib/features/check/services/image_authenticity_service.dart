@@ -123,7 +123,7 @@ class ImageAuthenticityService {
       final nonce = _generateNonce();
 
       final requestUrl =
-          '${_tineyeSearchUrl}?api_key=$_tineyyeApiKey&timestamp=$timestamp&nonce=$nonce';
+          '$_tineyeSearchUrl?api_key=$_tineyyeApiKey&timestamp=$timestamp&nonce=$nonce';
       final signature = _generateTineyeSignature(
         requestUrl,
         _tineyyePrivateKey,

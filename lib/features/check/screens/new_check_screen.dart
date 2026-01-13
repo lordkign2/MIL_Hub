@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import '../di/check_injection.dart';
 import '../presentation/bloc/check_bloc.dart';
 import '../presentation/screens/clean_check_screen.dart';
 

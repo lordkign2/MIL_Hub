@@ -42,7 +42,7 @@ class CommunityService {
     if (searchQuery != null && searchQuery.isNotEmpty) {
       query = query
           .where('content', isGreaterThanOrEqualTo: searchQuery)
-          .where('content', isLessThan: searchQuery + 'z');
+          .where('content', isLessThan: '${searchQuery}z');
     }
 
     if (tags != null && tags.isNotEmpty) {
@@ -394,7 +394,7 @@ class CommunityService {
     final snapshot = await _firestore
         .collection(_postsCollection)
         .where('content', isGreaterThanOrEqualTo: query)
-        .where('content', isLessThan: query + 'z')
+        .where('content', isLessThan: '${query}z')
         .where('isArchived', isEqualTo: false)
         .limit(limit)
         .get();

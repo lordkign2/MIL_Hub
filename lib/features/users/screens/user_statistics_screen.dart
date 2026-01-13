@@ -115,8 +115,8 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                     end: Alignment.bottomRight,
                     colors: [
                       widget.themeColor,
-                      widget.themeColor.withOpacity(0.7),
-                      Colors.black.withOpacity(0.8),
+                      widget.themeColor.withValues(alpha: 0.7),
+                      Colors.black.withValues(alpha: 0.8),
                     ],
                   ),
                 ),
@@ -148,7 +148,7 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Row(
@@ -282,10 +282,13 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [color.withOpacity(0.2), Colors.black.withOpacity(0.8)],
+          colors: [
+            color.withValues(alpha: 0.2),
+            Colors.black.withValues(alpha: 0.8),
+          ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,7 +301,7 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                 ),
                 child: Icon(Icons.trending_up_rounded, color: color, size: 12),
               ),
@@ -360,7 +363,7 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.grey[900]!.withOpacity(0.5),
+                        color: Colors.grey[900]!.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -429,9 +432,11 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(
+                    color: widget.themeColor.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,9 +486,11 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(
+                    color: widget.themeColor.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -514,7 +521,7 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                         percentage,
                         _getCategoryColor(entry.key),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
@@ -573,7 +580,7 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: percentage / 100,
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation<Color>(color),
               minHeight: 6,
             ),
@@ -624,7 +631,7 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                     // Achievement items
                     ..._getRecentAchievements().map((achievement) {
                       return _buildAchievementItem(achievement);
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
@@ -644,12 +651,12 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.amber.withOpacity(0.2),
-            Colors.black.withOpacity(0.8),
+            Colors.amber.withValues(alpha: 0.2),
+            Colors.black.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.amber.withOpacity(0.3)),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -658,7 +665,7 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
             height: 48,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.amber.withOpacity(0.3),
+              color: Colors.amber.withValues(alpha: 0.3),
             ),
             child: Icon(
               achievement['icon'] as IconData,
@@ -712,9 +719,11 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(
+                    color: widget.themeColor.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

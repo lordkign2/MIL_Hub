@@ -1,6 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart';
-import '../../../../core/error/failure.dart';
 import '../../domain/usecases/analyze_link_usecase.dart';
 import '../../domain/usecases/save_link_check_usecase.dart';
 import '../../domain/usecases/get_recent_link_checks_usecase.dart';

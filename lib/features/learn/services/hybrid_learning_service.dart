@@ -4,7 +4,6 @@ import '../models/enhanced_lesson_model.dart';
 import '../models/user_progress_model.dart';
 import 'learning_service.dart';
 import 'offline_learning_service.dart';
-import 'dart:math' as math;
 
 /// Hybrid service that seamlessly works online and offline
 class HybridLearningService {

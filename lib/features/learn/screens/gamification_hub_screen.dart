@@ -565,7 +565,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                               ),
                             ),
                           )
-                          .toList(),
+                          ,
                     ] else ...[
                       Center(
                         child: Column(

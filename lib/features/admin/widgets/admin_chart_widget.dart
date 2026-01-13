@@ -61,9 +61,9 @@ class _AdminChartWidgetState extends State<AdminChartWidget>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+        border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +82,7 @@ class _AdminChartWidgetState extends State<AdminChartWidget>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: widget.themeColor.withOpacity(0.2),
+                  color: widget.themeColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(

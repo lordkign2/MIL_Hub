@@ -170,7 +170,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: _userProfile?.preferences.darkMode ?? true,
           onChanged: (value) => _toggleTheme(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -187,7 +187,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: true, // TODO: Get actual auto-sync setting
           onChanged: (value) => _toggleAutoSync(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
     ]);
@@ -205,7 +205,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: _userProfile?.preferences.pushNotifications ?? true,
           onChanged: (value) => _togglePushNotifications(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -216,7 +216,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: _userProfile?.preferences.emailDigest ?? true,
           onChanged: (value) => _toggleEmailDigest(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -227,7 +227,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: notifications?.achievementUnlocked ?? true,
           onChanged: (value) => _toggleAchievementAlerts(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -238,7 +238,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: notifications?.streakReminder ?? true,
           onChanged: (value) => _toggleStreakReminders(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -282,7 +282,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: learning?.adaptiveLearning ?? true,
           onChanged: (value) => _toggleAdaptiveLearning(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -293,7 +293,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: learning?.gamificationEnabled ?? true,
           onChanged: (value) => _toggleGamification(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -317,7 +317,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: privacy?.profileVisible ?? true,
           onChanged: (value) => _toggleProfileVisibility(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -328,7 +328,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: privacy?.activityVisible ?? true,
           onChanged: (value) => _toggleActivitySharing(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -339,7 +339,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: privacy?.achievementsVisible ?? true,
           onChanged: (value) => _toggleAchievementsVisibility(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -350,7 +350,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: privacy?.showOnlineStatus ?? true,
           onChanged: (value) => _toggleOnlineStatus(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -386,7 +386,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: accessibility?.highContrast ?? false,
           onChanged: (value) => _toggleHighContrast(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -397,7 +397,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: accessibility?.reduceMotion ?? false,
           onChanged: (value) => _toggleReduceMotion(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(
@@ -408,7 +408,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         trailing: Switch(
           value: accessibility?.screenReader ?? false,
           onChanged: (value) => _toggleScreenReader(),
-          activeColor: widget.themeColor,
+          activeThumbColor: widget.themeColor,
         ),
       ),
       _buildSettingItem(

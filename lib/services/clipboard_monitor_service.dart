@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../features/check/services/link_check_service.dart';
 
 class ClipboardMonitorService {
   static String? _lastCheckedClipboard;

@@ -5,7 +5,6 @@ import '../../domain/entities/lesson_entity.dart';
 import '../../domain/repositories/lesson_repository.dart';
 import '../datasources/lesson_local_data_source.dart';
 import '../datasources/lesson_remote_data_source.dart';
-import '../models/lesson_model.dart';
 
 /// Implementation of LessonRepository
 class LessonRepositoryImpl implements LessonRepository {
@@ -74,7 +73,7 @@ class LessonRepositoryImpl implements LessonRepository {
         return (lesson: remoteLesson.toEntity(), failure: null);
       } on ServerException catch (e) {
         return (lesson: null, failure: ServerFailure(message: e.message));
-      } on NetworkException catch (e) {
+      } on NetworkException {
         // Try local cache as fallback
         try {
           final localLesson = await _localDataSource.getLessonById(id);
@@ -207,7 +206,7 @@ class LessonRepositoryImpl implements LessonRepository {
         return (progress: remoteProgress, failure: null);
       } on ServerException catch (e) {
         return (progress: null, failure: ServerFailure(message: e.message));
-      } on NetworkException catch (e) {
+      } on NetworkException {
         // Try local cache as fallback
         try {
           final localProgress = await _localDataSource.getUserProgress();

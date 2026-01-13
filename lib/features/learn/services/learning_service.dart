@@ -415,7 +415,7 @@ class LearningService {
         'iconName': 'streak_keeper',
         'points': 50,
         'rarity': 'epic',
-        'criteria': () => (userStats.streak?.currentStreak ?? 0) >= 7,
+        'criteria': () => (userStats.streak.currentStreak ?? 0) >= 7,
       },
     ];
 

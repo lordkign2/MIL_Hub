@@ -77,7 +77,7 @@ class LessonCardWidget extends StatelessWidget {
               const SizedBox(height: AppConstants.defaultPadding),
               LinearProgressIndicator(
                 value: progress / 100,
-                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 valueColor: AlwaysStoppedAnimation<Color>(
                   _getColorFromHex(lesson.color) ??
                       Theme.of(context).colorScheme.primary,

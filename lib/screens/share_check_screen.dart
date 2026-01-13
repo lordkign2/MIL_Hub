@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/share_intent_service.dart';
 import '../features/check/services/link_check_service.dart';
-import '../features/check/services/image_authenticity_service.dart';
 import '../constants/global_variables.dart';
 
 class ShareCheckScreen extends StatefulWidget {
@@ -113,7 +112,7 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
               gradient: LinearGradient(
                 colors: [
                   GlobalVariables.backgroundColor,
-                  Colors.indigo.shade900.withOpacity(0.3),
+                  Colors.indigo.shade900.withValues(alpha: 0.3),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -184,13 +183,13 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.indigo.withOpacity(0.2),
-                  Colors.purple.withOpacity(0.1),
+                  Colors.indigo.withValues(alpha: 0.2),
+                  Colors.purple.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.indigo.withOpacity(0.3),
+                color: Colors.indigo.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -208,7 +207,7 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.indigo.withOpacity(0.3),
+                          color: Colors.indigo.withValues(alpha: 0.3),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -270,12 +269,15 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.indigo.withOpacity(0.2),
-            Colors.purple.withOpacity(0.1),
+            Colors.indigo.withValues(alpha: 0.2),
+            Colors.purple.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.indigo.withOpacity(0.3), width: 1),
+        border: Border.all(
+          color: Colors.indigo.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: Column(
         children: [
@@ -291,7 +293,7 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.indigo.withOpacity(0.3),
+                    color: Colors.indigo.withValues(alpha: 0.3),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
@@ -360,7 +362,7 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -383,9 +385,12 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.withOpacity(0.3), width: 1),
+        border: Border.all(
+          color: Colors.orange.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,7 +418,14 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
             (url) => RadioListTile<String>(
               value: url,
               groupValue: _selectedUrl,
-              onChanged: (value) => setState(() => _selectedUrl = value),
+              toggleable: true,
+              onChanged: (value) => setState(() {
+                if (_selectedUrl == url) {
+                  _selectedUrl = null;
+                } else {
+                  _selectedUrl = value;
+                }
+              }),
               title: Text(
                 url.length > 50 ? '${url.substring(0, 50)}...' : url,
                 style: const TextStyle(color: Colors.white, fontSize: 13),
@@ -481,13 +493,13 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _analysisResult.isOverallSafe
-            ? Colors.green.withOpacity(0.1)
-            : Colors.orange.withOpacity(0.1),
+            ? Colors.green.withValues(alpha: 0.1)
+            : Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _analysisResult.isOverallSafe
-              ? Colors.green.withOpacity(0.3)
-              : Colors.orange.withOpacity(0.3),
+              ? Colors.green.withValues(alpha: 0.3)
+              : Colors.orange.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -576,9 +588,9 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.1),
+        color: Colors.blue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue.withOpacity(0.3), width: 1),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.3), width: 1),
       ),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,9 +624,9 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.1),
+        color: Colors.blue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue.withOpacity(0.3), width: 1),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.3), width: 1),
       ),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,

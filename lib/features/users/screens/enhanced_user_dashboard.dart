@@ -25,7 +25,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
 
   UserProfile? _userProfile;
   UserAnalytics? _analytics;
-  List<UserActivity> _recentActivities = [];
+  final List<UserActivity> _recentActivities = [];
   bool _isLoading = true;
 
   @override
@@ -338,9 +338,9 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                                     ],
                                   ),
                                   child: ClipOval(
-                                    child: profile?.photoURL != null
+                                    child: profile.photoURL != null
                                         ? Image.network(
-                                            profile!.photoURL!,
+                                            profile.photoURL!,
                                             fit: BoxFit.cover,
                                             errorBuilder:
                                                 (context, error, stackTrace) {
@@ -360,7 +360,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      profile?.displayName ?? 'User',
+                                      profile.displayName ?? 'User',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 24,
@@ -371,7 +371,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      profile?.email ?? '',
+                                      profile.email ?? '',
                                       style: const TextStyle(
                                         color: Colors.white70,
                                         fontSize: 14,
@@ -386,7 +386,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                                           Colors.amber,
                                         ),
                                         const SizedBox(width: 8),
-                                        if (profile?.subscription.isPremium ==
+                                        if (profile.subscription.isPremium ==
                                             true)
                                           _buildStatusChip(
                                             'Premium',

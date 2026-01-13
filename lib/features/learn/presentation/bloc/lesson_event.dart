@@ -1,4 +1,3 @@
-import '../../domain/entities/lesson_entity.dart';
 
 /// Base class for all lesson events
 abstract class LessonEvent {

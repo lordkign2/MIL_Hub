@@ -91,13 +91,13 @@ class _ClipboardAlertDialogState extends State<ClipboardAlertDialog>
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: widget.checkResult.isSuspicious
-                      ? Colors.orange.withOpacity(0.1)
-                      : Colors.blue.withOpacity(0.1),
+                      ? Colors.orange.withValues(alpha: 0.1)
+                      : Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: widget.checkResult.isSuspicious
-                        ? Colors.orangeAccent.withOpacity(0.3)
-                        : Colors.blueAccent.withOpacity(0.3),
+                        ? Colors.orangeAccent.withValues(alpha: 0.3)
+                        : Colors.blueAccent.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),

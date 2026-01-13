@@ -77,18 +77,18 @@ class _UserStatsWidgetState extends State<UserStatsWidget>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      widget.themeColor.withOpacity(0.2),
-                      Colors.black.withOpacity(0.8),
+                      widget.themeColor.withValues(alpha: 0.2),
+                      Colors.black.withValues(alpha: 0.8),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: widget.themeColor.withOpacity(0.3),
+                    color: widget.themeColor.withValues(alpha: 0.3),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: widget.themeColor.withOpacity(0.1),
+                      color: widget.themeColor.withValues(alpha: 0.1),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
@@ -197,9 +197,9 @@ class _UserStatsWidgetState extends State<UserStatsWidget>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -261,7 +261,7 @@ class _UserStatsWidgetState extends State<UserStatsWidget>
           borderRadius: BorderRadius.circular(10),
           child: LinearProgressIndicator(
             value: progress.clamp(0.0, 1.0),
-            backgroundColor: Colors.white.withOpacity(0.2),
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation<Color>(widget.themeColor),
             minHeight: 8,
           ),
@@ -378,7 +378,7 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
                 strokeWidth: widget.strokeWidth,
                 backgroundColor: Colors.transparent,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  widget.color.withOpacity(0.2),
+                  widget.color.withValues(alpha: 0.2),
                 ),
               ),
               // Progress circle
@@ -521,7 +521,7 @@ class _StatsChartWidgetState extends State<StatsChartWidget>
           child: Text(
             'No data available',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 16,
             ),
           ),
@@ -572,7 +572,7 @@ class _StatsChartWidgetState extends State<StatsChartWidget>
                             end: Alignment.topCenter,
                             colors: [
                               widget.color,
-                              widget.color.withOpacity(0.7),
+                              widget.color.withValues(alpha: 0.7),
                             ],
                           ),
                           borderRadius: const BorderRadius.vertical(

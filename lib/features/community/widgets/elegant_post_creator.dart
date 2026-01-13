@@ -25,7 +25,7 @@ class _ElegantPostCreatorState extends State<ElegantPostCreator>
 
   PostType _selectedType = PostType.text;
   PostPrivacy _selectedPrivacy = PostPrivacy.public;
-  List<String> _tags = [];
+  final List<String> _tags = [];
   bool _isPosting = false;
   int _characterCount = 0;
 

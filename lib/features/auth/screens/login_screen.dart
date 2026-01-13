@@ -13,7 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _errorMessage;
-  bool _isSigningIn = false; 
+  bool _isSigningIn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                       setState(() => _isSigningIn = false);
                       if (result.user != null) {
-                        Navigator.pushReplacementNamed(context, "/home");
+                        if (mounted) {
+                          Navigator.pushReplacementNamed(context, "/home");
+                        }
                       } else {
                         setState(() {
                           _errorMessage = result.error ?? "Login failed";
@@ -124,11 +126,15 @@ class _LoginScreenState extends State<LoginScreen> {
               final user = await AuthService().signInWithGoogle();
               setState(() => _isSigningIn = false);
               if (user != null) {
-                Navigator.pushReplacementNamed(context, "/home");
+                if (mounted) {
+                  Navigator.pushReplacementNamed(context, "/home");
+                }
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Google Sign-In failed")),
-                );
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Google Sign-In failed")),
+                  );
+                }
               }
             }, isSigningIn: _isSigningIn),
 
@@ -163,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
       obscureText: obscure,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.white70),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

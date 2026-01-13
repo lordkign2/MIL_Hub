@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:math' as math;
 import 'quiz_screen.dart';
 
 class ImmersiveLessonDetailScreen extends StatefulWidget {
@@ -244,7 +243,7 @@ class _ImmersiveLessonDetailScreenState
                                       _buildInfoChip(
                                         icon: Icons.schedule_rounded,
                                         text:
-                                            '${_estimatedReadingTime} min read',
+                                            '$_estimatedReadingTime min read',
                                       ),
                                       const SizedBox(width: 12),
                                       if (widget.questions.isNotEmpty)

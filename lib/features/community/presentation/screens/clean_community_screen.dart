@@ -179,7 +179,7 @@ class _CleanCommunityScreenState extends State<CleanCommunityScreen> {
                       child: Container(
                         width: 200,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(
                             AppConstants.smallBorderRadius,
                           ),
@@ -202,7 +202,7 @@ class _CleanCommunityScreenState extends State<CleanCommunityScreen> {
                     label: Text('#$tag'),
                     backgroundColor: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.1),
+                    ).colorScheme.primary.withValues(alpha: 0.1),
                     labelStyle: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 12,

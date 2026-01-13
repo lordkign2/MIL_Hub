@@ -73,7 +73,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       );
                       setState(() => _isSigningUp = false);
                       if (result.user != null) {
-                        Navigator.pushReplacementNamed(context, "/home");
+                        if (mounted) {
+                          Navigator.pushReplacementNamed(context, "/home");
+                        }
                       } else {
                         setState(() {
                           _errorMessage = result.error ?? "Signup failed";
@@ -120,11 +122,15 @@ class _SignupScreenState extends State<SignupScreen> {
               final user = await AuthService().signInWithGoogle();
               setState(() => _isSigningUp = false);
               if (user != null) {
-                Navigator.pushReplacementNamed(context, "/home");
+                if (mounted) {
+                  Navigator.pushReplacementNamed(context, "/home");
+                }
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Google Sign-In failed")),
-                );
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Google Sign-In failed")),
+                  );
+                }
               }
             }, isSigningUp: _isSigningUp),
 
@@ -153,7 +159,7 @@ class _SignupScreenState extends State<SignupScreen> {
       obscureText: obscure,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.white70),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

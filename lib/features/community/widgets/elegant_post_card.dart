@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/post_model.dart';
-import '../models/comment_model.dart';
 import '../services/community_service.dart';
 import '../../../constants/global_variables.dart';
 import './like_animation_widget.dart';

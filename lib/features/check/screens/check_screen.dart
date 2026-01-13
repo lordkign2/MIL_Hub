@@ -96,19 +96,22 @@ class _CheckScreenState extends State<CheckScreen>
       // Provide haptic feedback
       HapticFeedback.mediumImpact();
     } catch (e) {
+      final context = this.context; // Capture context before async gap
       setState(() {
         _errorMessage = e.toString();
         _isChecking = false;
       });
 
       // Show error snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 
@@ -153,8 +156,8 @@ class _CheckScreenState extends State<CheckScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.indigo.withOpacity(0.8),
-              Colors.black.withOpacity(0.9),
+              Colors.indigo.withValues(alpha: 0.8),
+              Colors.black.withValues(alpha: 0.9),
               Colors.black,
             ],
           ),
@@ -218,9 +221,9 @@ class _CheckScreenState extends State<CheckScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.indigo.withOpacity(0.2),
+              color: Colors.indigo.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.indigo.withOpacity(0.3)),
+              border: Border.all(color: Colors.indigo.withValues(alpha: 0.3)),
             ),
             child: const Icon(
               Icons.security_rounded,
@@ -275,7 +278,7 @@ class _CheckScreenState extends State<CheckScreen>
         Text(
           'Paste any URL below to analyze its safety and legitimacy',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             fontSize: 16,
             height: 1.4,
           ),
@@ -287,12 +290,12 @@ class _CheckScreenState extends State<CheckScreen>
   Widget _buildUrlInput() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _urlFocusNode.hasFocus
-              ? Colors.indigo.withOpacity(0.5)
-              : Colors.white.withOpacity(0.2),
+              ? Colors.indigo.withValues(alpha: 0.5)
+              : Colors.white.withValues(alpha: 0.2),
         ),
       ),
       child: TextField(
@@ -301,10 +304,10 @@ class _CheckScreenState extends State<CheckScreen>
         style: const TextStyle(color: Colors.white, fontSize: 16),
         decoration: InputDecoration(
           hintText: 'Enter URL (e.g., https://example.com)',
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
           prefixIcon: Icon(
             Icons.link_rounded,
-            color: Colors.indigo.withOpacity(0.7),
+            color: Colors.indigo.withValues(alpha: 0.7),
           ),
           suffixIcon: _urlController.text.isNotEmpty
               ? IconButton(
@@ -314,7 +317,7 @@ class _CheckScreenState extends State<CheckScreen>
                   },
                   icon: Icon(
                     Icons.clear_rounded,
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                   ),
                 )
               : null,
@@ -370,9 +373,9 @@ class _CheckScreenState extends State<CheckScreen>
     return Container(
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Column(
         children: [
@@ -388,7 +391,7 @@ class _CheckScreenState extends State<CheckScreen>
           Text(
             'Checking protocol, keywords, and reachability',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white.withValues(alpha: 0.5),
               fontSize: 14,
             ),
           ),
@@ -435,12 +438,12 @@ class _CheckScreenState extends State<CheckScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            verdictColor.withOpacity(0.2),
-            Colors.black.withOpacity(0.8),
+            verdictColor.withValues(alpha: 0.2),
+            Colors.black.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: verdictColor.withOpacity(0.3)),
+        border: Border.all(color: verdictColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,14 +488,14 @@ class _CheckScreenState extends State<CheckScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.link_rounded,
-                  color: Colors.indigo.withOpacity(0.7),
+                  color: Colors.indigo.withValues(alpha: 0.7),
                   size: 16,
                 ),
                 const SizedBox(width: 8),
@@ -522,9 +525,9 @@ class _CheckScreenState extends State<CheckScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -554,9 +557,9 @@ class _CheckScreenState extends State<CheckScreen>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.1),
+        color: statusColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withOpacity(0.2)),
+        border: Border.all(color: statusColor.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -582,7 +585,7 @@ class _CheckScreenState extends State<CheckScreen>
             Text(
               result.details!,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 fontSize: 14,
                 height: 1.4,
               ),
@@ -601,9 +604,9 @@ class _CheckScreenState extends State<CheckScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.1),
+        color: Colors.blue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.blue.withOpacity(0.2)),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -643,7 +646,7 @@ class _CheckScreenState extends State<CheckScreen>
                     child: Text(
                       recommendation,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 14,
                         height: 1.4,
                       ),
@@ -662,9 +665,9 @@ class _CheckScreenState extends State<CheckScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -693,9 +696,9 @@ class _CheckScreenState extends State<CheckScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -734,7 +737,7 @@ class _CheckScreenState extends State<CheckScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -749,7 +752,7 @@ class _CheckScreenState extends State<CheckScreen>
                   child: Text(
                     'Future: Google Safe Browsing, AI analysis, and domain reputation checks',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 12,
                       fontStyle: FontStyle.italic,
                     ),
@@ -786,7 +789,7 @@ class _CheckScreenState extends State<CheckScreen>
                 Text(
                   description,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                     fontSize: 12,
                   ),
                 ),

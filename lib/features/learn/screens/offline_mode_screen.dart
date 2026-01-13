@@ -926,7 +926,7 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
               ),
               value: true,
               onChanged: (value) {},
-              activeColor: widget.themeColor,
+              activeThumbColor: widget.themeColor,
             ),
             SwitchListTile(
               title: const Text(
@@ -939,7 +939,7 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
               ),
               value: true,
               onChanged: (value) {},
-              activeColor: widget.themeColor,
+              activeThumbColor: widget.themeColor,
             ),
           ],
         ),

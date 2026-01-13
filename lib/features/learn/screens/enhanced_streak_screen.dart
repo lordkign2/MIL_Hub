@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:math' as math;
 import '../models/gamification_model.dart';
 import '../services/gamification_service.dart';
 
@@ -642,7 +641,7 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
                             ],
                           ),
                         );
-                      }).toList()
+                      })
                     else
                       const Text(
                         'No activity data available',

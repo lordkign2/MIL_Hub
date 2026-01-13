@@ -86,19 +86,19 @@ class _AdminStatsCardState extends State<AdminStatsCard>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      widget.color.withOpacity(0.2),
-                      widget.color.withOpacity(0.1),
-                      Colors.black.withOpacity(0.3),
+                      widget.color.withValues(alpha: 0.2),
+                      widget.color.withValues(alpha: 0.1),
+                      Colors.black.withValues(alpha: 0.3),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: widget.color.withOpacity(0.3),
+                    color: widget.color.withValues(alpha: 0.3),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: widget.color.withOpacity(0.2),
+                      color: widget.color.withValues(alpha: 0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -126,7 +126,7 @@ class _AdminStatsCardState extends State<AdminStatsCard>
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: widget.color.withOpacity(0.2),
+                            color: widget.color.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
@@ -164,8 +164,8 @@ class _AdminStatsCardState extends State<AdminStatsCard>
                                 ),
                                 decoration: BoxDecoration(
                                   color: widget.trend!.startsWith('+')
-                                      ? Colors.green.withOpacity(0.2)
-                                      : Colors.red.withOpacity(0.2),
+                                      ? Colors.green.withValues(alpha: 0.2)
+                                      : Colors.red.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(

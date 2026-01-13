@@ -197,7 +197,7 @@ class _BadgesScreenState extends State<BadgesScreen>
                           onChanged: (value) {
                             setState(() => _showUnlockedOnly = value);
                           },
-                          activeColor: widget.themeColor,
+                          activeThumbColor: widget.themeColor,
                         ),
                         const SizedBox(width: 8),
                         const Text(
@@ -314,7 +314,7 @@ class _BadgesScreenState extends State<BadgesScreen>
                   ),
                 ),
               )
-              .toList(),
+              ,
         ],
         onChanged: (value) => setState(() => _selectedCategory = value),
       ),
@@ -350,7 +350,7 @@ class _BadgesScreenState extends State<BadgesScreen>
                   ),
                 ),
               )
-              .toList(),
+              ,
         ],
         onChanged: (value) => setState(() => _selectedRarity = value),
       ),

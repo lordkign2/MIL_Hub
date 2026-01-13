@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import '../models/user_profile_model.dart';
 
 class UserService {
@@ -305,7 +304,7 @@ class UserService {
     try {
       final snapshot = await usersCollection
           .where('displayName', isGreaterThanOrEqualTo: query)
-          .where('displayName', isLessThan: query + '\uf8ff')
+          .where('displayName', isLessThan: '$query\uf8ff')
           .limit(limit)
           .get();
 
@@ -343,6 +342,97 @@ class UserService {
       // Silently fail for this non-critical update
       print('Failed to update last active: $e');
     }
+  }
+
+  // Stream user analytics
+  static Stream<UserAnalytics> streamUserAnalytics() {
+    final user = auth.currentUser;
+    if (user == null) {
+      // Return a stream with default analytics if user is not authenticated
+      return Stream.value(
+        UserAnalytics(
+          totalActivities: 0,
+          weeklyActivities: 0,
+          monthlyActivities: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          totalTimeSpent: 0,
+          averageScore: 0.0,
+          level: 1,
+          joinedDays: 0,
+          lastActiveAgo: 0,
+        ),
+      );
+    }
+
+    return usersCollection.doc(user.uid).snapshots().asyncMap((snapshot) async {
+      if (!snapshot.exists) {
+        // Return default analytics for new users
+        return UserAnalytics(
+          totalActivities: 0,
+          weeklyActivities: 0,
+          monthlyActivities: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          totalTimeSpent: 0,
+          averageScore: 0.0,
+          level: 1,
+          joinedDays: 0,
+          lastActiveAgo: 0,
+        );
+      }
+
+      final profile = UserProfile.fromFirestore(snapshot);
+      return _calculateUserAnalytics(profile);
+    });
+  }
+
+  // Helper method to calculate user analytics
+  static UserAnalytics _calculateUserAnalytics(UserProfile profile) {
+    // Calculate analytics based on profile data and recent activities
+    final now = DateTime.now();
+    final thisWeek = now.subtract(const Duration(days: 7));
+    final thisMonth = DateTime(now.year, now.month, 1);
+
+    // For simplicity in this example, we're using profile stats
+    // In a real implementation, you would query recent activities
+    return UserAnalytics(
+      totalActivities: profile.stats.totalLessonsCompleted,
+      weeklyActivities: 0, // Would be calculated from recent activities
+      monthlyActivities: 0, // Would be calculated from recent activities
+      currentStreak: profile.stats.currentStreak,
+      longestStreak: profile.stats.longestStreak,
+      totalTimeSpent: profile.stats.totalTimeSpent,
+      averageScore: profile.stats.averageQuizScore,
+      level: profile.stats.level,
+      joinedDays: now.difference(profile.joinedDate).inDays,
+      lastActiveAgo: now.difference(profile.lastActiveDate).inDays,
+    );
+  }
+
+  // Get paginated user activities for infinite scroll
+  static Future<List<UserActivity>> getPaginatedUserActivities({
+    int limit = 20,
+    DocumentSnapshot? lastDocument,
+  }) async {
+    final user = auth.currentUser;
+    if (user == null) return [];
+
+    Query query = _userActivitiesCollection
+        .where('userId', isEqualTo: user.uid)
+        .orderBy('timestamp', descending: true)
+        .limit(limit);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    final snapshot = await query.get();
+    final activities = snapshot.docs.map((doc) {
+      return UserActivity.fromFirestore(doc);
+    }).toList();
+
+    return activities;
   }
 }
 

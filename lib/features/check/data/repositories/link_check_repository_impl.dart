@@ -1,4 +1,3 @@
-import 'package:fpdart/fpdart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/link_check_entity.dart';

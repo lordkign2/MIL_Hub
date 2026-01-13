@@ -149,7 +149,7 @@ class _NewSignupScreenState extends State<NewSignupScreen> {
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         hintText: 'Email',
         hintStyle: const TextStyle(color: Colors.white70),
         prefixIcon: const Icon(Icons.email, color: Colors.white70),
@@ -177,7 +177,7 @@ class _NewSignupScreenState extends State<NewSignupScreen> {
       obscureText: !_isPasswordVisible,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         hintText: 'Password',
         hintStyle: const TextStyle(color: Colors.white70),
         prefixIcon: const Icon(Icons.lock, color: Colors.white70),
@@ -216,7 +216,7 @@ class _NewSignupScreenState extends State<NewSignupScreen> {
       obscureText: !_isConfirmPasswordVisible,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         hintText: 'Confirm Password',
         hintStyle: const TextStyle(color: Colors.white70),
         prefixIcon: const Icon(Icons.lock_outline, color: Colors.white70),

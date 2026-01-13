@@ -106,7 +106,7 @@ class GamificationService {
 
       case BadgeCategory.streak:
         final requiredStreak = badge.criteria['streakDays'] as int? ?? 0;
-        return (stats.streak?.currentStreak ?? 0) >= requiredStreak;
+        return (stats.streak.currentStreak ?? 0) >= requiredStreak;
 
       case BadgeCategory.milestone:
         final requiredPoints = badge.criteria['totalPoints'] as int? ?? 0;
@@ -229,7 +229,7 @@ class GamificationService {
         points = stats.totalLessonsCompleted;
         break;
       case LeaderboardType.streaks:
-        points = stats.streak?.currentStreak ?? 0;
+        points = stats.streak.currentStreak ?? 0;
         break;
       default:
         points = stats.totalAchievementPoints;
@@ -242,7 +242,7 @@ class GamificationService {
       'displayName': 'User $userId', // In real app, get from user profile
       'points': points,
       'lessonsCompleted': stats.totalLessonsCompleted,
-      'currentStreak': stats.streak?.currentStreak ?? 0,
+      'currentStreak': stats.streak.currentStreak ?? 0,
       'stats': {
         'totalTimeSpent': stats.totalTimeSpent,
         'averageQuizScore': stats.averageQuizScore,

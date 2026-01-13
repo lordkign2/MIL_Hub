@@ -142,8 +142,8 @@ class _AdminDashboardState extends State<AdminDashboard>
             end: Alignment.bottomRight,
             colors: [
               widget.themeColor,
-              widget.themeColor.withOpacity(0.7),
-              Colors.black.withOpacity(0.8),
+              widget.themeColor.withValues(alpha: 0.7),
+              Colors.black.withValues(alpha: 0.8),
             ],
           ),
         ),
@@ -207,9 +207,9 @@ class _AdminDashboardState extends State<AdminDashboard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -401,12 +401,12 @@ class _AdminDashboardState extends State<AdminDashboard>
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color.withOpacity(0.2),
+        backgroundColor: color.withValues(alpha: 0.2),
         foregroundColor: color,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: color.withOpacity(0.3)),
+          side: BorderSide(color: color.withValues(alpha: 0.3)),
         ),
       ),
       child: Column(
@@ -474,9 +474,9 @@ class _AdminDashboardState extends State<AdminDashboard>
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.grey[900]!.withOpacity(0.5),
+            color: Colors.grey[900]!.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+            border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
           ),
           child: Column(
             children: [

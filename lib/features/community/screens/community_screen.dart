@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/post_model.dart';
 import '../services/community_service.dart';
@@ -22,11 +21,11 @@ class _CommunityScreenState extends State<CommunityScreen>
   late AnimationController _fabAnimationController;
   late Animation<double> _fabScaleAnimation;
 
-  List<PostModel> _posts = [];
-  List<String> _selectedTags = [];
+  final List<PostModel> _posts = [];
+  final List<String> _selectedTags = [];
   String _searchQuery = '';
   bool _isLoading = false;
-  bool _hasMorePosts = true;
+  final bool _hasMorePosts = true;
   DocumentSnapshot? _lastDocument;
   bool _showSearch = false;
 
@@ -190,7 +189,7 @@ class _CommunityScreenState extends State<CommunityScreen>
       floating: true,
       pinned: true,
       backgroundColor: Colors.transparent,
-      flexibleSpace: Container(
+      flexibleSpace: SizedBox(
         height: double.infinity,
         width: double.infinity,
         child: Container(

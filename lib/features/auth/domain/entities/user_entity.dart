@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 
 /// User entity representing the domain model
 class UserEntity {

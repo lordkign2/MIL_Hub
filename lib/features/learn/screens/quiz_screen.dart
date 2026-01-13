@@ -40,8 +40,8 @@ class _InteractiveQuizScreenState extends State<InteractiveQuizScreen>
   bool _isCorrect = false;
 
   // Adaptive learning variables
-  List<int> _timeSpentPerQuestion = [];
-  List<bool> _correctAnswers = [];
+  final List<int> _timeSpentPerQuestion = [];
+  final List<bool> _correctAnswers = [];
   DateTime? _questionStartTime;
   double _difficultyRating = 1.0;
 

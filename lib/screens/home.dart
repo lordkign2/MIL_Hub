@@ -6,7 +6,6 @@ import '../features/learn/screens/learn_screen.dart';
 import '../features/community/screens/community_screen.dart';
 import '../services/clipboard_monitor_service.dart';
 import '../widgets/clipboard_alert_dialog.dart';
-import 'landing_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

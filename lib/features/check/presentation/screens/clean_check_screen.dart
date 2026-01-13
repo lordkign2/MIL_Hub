@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../di/check_injection.dart';
 import '../../domain/entities/link_check_entity.dart';
 import '../bloc/check_bloc.dart';
 import '../bloc/check_event.dart';
@@ -141,8 +140,8 @@ class _CleanCheckScreenState extends State<CleanCheckScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.indigo.withOpacity(0.8),
-                  Colors.black.withOpacity(0.9),
+                  Colors.indigo.withValues(alpha: 0.8),
+                  Colors.black.withValues(alpha: 0.9),
                   Colors.black,
                 ],
               ),
@@ -326,8 +325,8 @@ class _CleanCheckScreenState extends State<CleanCheckScreen>
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: assessment.isOverallSafe
-                  ? Colors.green.withOpacity(0.2)
-                  : Colors.red.withOpacity(0.2),
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : Colors.red.withValues(alpha: 0.2),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(13),
               ),

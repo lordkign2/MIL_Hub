@@ -58,7 +58,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                 : _reports.isEmpty
                 ? Center(
                     child: Text(
-                      'No ${_selectedStatus} reports',
+                      'No $_selectedStatus reports',
                       style: const TextStyle(color: Colors.white70),
                     ),
                   )
@@ -209,7 +209,9 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(report.status).withOpacity(0.2),
+                      color: _getStatusColor(
+                        report.status,
+                      ).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -258,15 +260,19 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
       );
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Report ${action}d successfully')),
-        );
-        _loadReports(); // Refresh the list
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Report ${action}d successfully')),
+          );
+          _loadReports(); // Refresh the list
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error handling report: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error handling report: $e')));
+      }
     }
   }
 

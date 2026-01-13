@@ -373,7 +373,7 @@ class _PersonalizedLearningDashboardState
                           child: _buildInsightCard(insight),
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
@@ -702,7 +702,7 @@ class _PersonalizedLearningDashboardState
   }
 
   Widget _buildProgressVisualization() {
-    return Container(
+    return SizedBox(
       height: 120,
       child: Row(
         children: [
@@ -1059,7 +1059,7 @@ class _PersonalizedLearningDashboardState
               trailing: Switch(
                 value: true,
                 onChanged: (value) {},
-                activeColor: widget.themeColor,
+                activeThumbColor: widget.themeColor,
               ),
             ),
             ListTile(
@@ -1071,7 +1071,7 @@ class _PersonalizedLearningDashboardState
               trailing: Switch(
                 value: true,
                 onChanged: (value) {},
-                activeColor: widget.themeColor,
+                activeThumbColor: widget.themeColor,
               ),
             ),
           ],

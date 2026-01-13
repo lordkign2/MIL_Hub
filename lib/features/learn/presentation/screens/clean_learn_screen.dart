@@ -219,7 +219,7 @@ class _CleanLearnScreenState extends State<CleanLearnScreen> {
                 const SizedBox(height: 16),
                 LinearProgressIndicator(
                   value: progress / 100,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
                 const SizedBox(height: 8),
                 Text('$progress% complete'),

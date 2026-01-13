@@ -85,19 +85,19 @@ class _AdminAccessWidgetState extends State<AdminAccessWidget>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  widget.themeColor.withOpacity(0.3),
-                  widget.themeColor.withOpacity(0.1),
-                  Colors.black.withOpacity(0.4),
+                  widget.themeColor.withValues(alpha: 0.3),
+                  widget.themeColor.withValues(alpha: 0.1),
+                  Colors.black.withValues(alpha: 0.4),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: widget.themeColor.withOpacity(0.5),
+                color: widget.themeColor.withValues(alpha: 0.5),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: widget.themeColor.withOpacity(0.3),
+                  color: widget.themeColor.withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -115,7 +115,7 @@ class _AdminAccessWidgetState extends State<AdminAccessWidget>
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: widget.themeColor.withOpacity(0.2),
+                          color: widget.themeColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
