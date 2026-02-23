@@ -134,8 +134,8 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                           end: Alignment.bottomRight,
                           colors: [
                             widget.themeColor,
-                            widget.themeColor.withOpacity(0.7),
-                            Colors.black.withOpacity(0.8),
+                            widget.themeColor.withValues(alpha: 0.7),
+                            Colors.black.withValues(alpha: 0.8),
                           ],
                         ),
                       ),
@@ -249,11 +249,11 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                                   borderRadius: BorderRadius.circular(20),
                                   color: isSelected
                                       ? widget.themeColor
-                                      : Colors.white.withOpacity(0.1),
+                                      : Colors.white.withValues(alpha: 0.1),
                                   border: Border.all(
                                     color: isSelected
                                         ? widget.themeColor
-                                        : Colors.white.withOpacity(0.2),
+                                        : Colors.white.withValues(alpha: 0.2),
                                   ),
                                 ),
                                 child: Text(
@@ -261,7 +261,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                                   style: TextStyle(
                                     color: isSelected
                                         ? Colors.white
-                                        : Colors.white.withOpacity(0.8),
+                                        : Colors.white.withValues(alpha: 0.8),
                                     fontWeight: isSelected
                                         ? FontWeight.bold
                                         : FontWeight.normal,
@@ -293,13 +293,13 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                         Icon(
                           Icons.emoji_events_outlined,
                           size: 64,
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           'No achievements found in $_selectedCategory',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
+                            color: Colors.white.withValues(alpha: 0.6),
                             fontSize: 16,
                           ),
                           textAlign: TextAlign.center,
@@ -379,13 +379,13 @@ class _AchievementsScreenState extends State<AchievementsScreen>
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isUnlocked
-              ? getRarityColor().withOpacity(0.1)
-              : Colors.grey[900]!.withOpacity(0.3),
+              ? getRarityColor().withValues(alpha: 0.1)
+              : Colors.grey[900]!.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isUnlocked
-                ? getRarityColor().withOpacity(0.5)
-                : Colors.white.withOpacity(0.1),
+                ? getRarityColor().withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.1),
             width: 2,
           ),
         ),
@@ -401,7 +401,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                     ? LinearGradient(
                         colors: [
                           getRarityColor(),
-                          getRarityColor().withOpacity(0.6),
+                          getRarityColor().withValues(alpha: 0.6),
                         ],
                       )
                     : LinearGradient(
@@ -442,10 +442,10 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: getRarityColor().withOpacity(0.2),
+                          color: getRarityColor().withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: getRarityColor().withOpacity(0.5),
+                            color: getRarityColor().withValues(alpha: 0.5),
                           ),
                         ),
                         child: Text(

@@ -305,7 +305,7 @@ class _InteractiveQuizScreenState extends State<InteractiveQuizScreen>
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [widget.color, widget.color.withOpacity(0.8)],
+                      colors: [widget.color, widget.color.withValues(alpha: 0.8)],
                     ),
                   ),
                   child: Column(
@@ -352,7 +352,7 @@ class _InteractiveQuizScreenState extends State<InteractiveQuizScreen>
                             height: 8,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                             ),
                             child: FractionallySizedBox(
                               alignment: Alignment.centerLeft,
@@ -394,7 +394,7 @@ class _InteractiveQuizScreenState extends State<InteractiveQuizScreen>
                                       color: Colors.grey[900],
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
-                                        color: widget.color.withOpacity(0.3),
+                                        color: widget.color.withValues(alpha: 0.3),
                                         width: 2,
                                       ),
                                     ),
@@ -479,8 +479,8 @@ class _InteractiveQuizScreenState extends State<InteractiveQuizScreen>
                                   margin: const EdgeInsets.only(top: 20),
                                   decoration: BoxDecoration(
                                     color: _isCorrect
-                                        ? Colors.green.withOpacity(0.2)
-                                        : Colors.red.withOpacity(0.2),
+                                        ? Colors.green.withValues(alpha: 0.2)
+                                        : Colors.red.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: _isCorrect
@@ -602,22 +602,22 @@ class _InteractiveQuizScreenState extends State<InteractiveQuizScreen>
     Color getBackgroundColor() {
       if (!showResult) {
         return isSelected
-            ? widget.color.withOpacity(0.2)
-            : Colors.white.withOpacity(0.05);
+            ? widget.color.withValues(alpha: 0.2)
+            : Colors.white.withValues(alpha: 0.05);
       }
 
       if (isCorrect) {
-        return Colors.green.withOpacity(0.2);
+        return Colors.green.withValues(alpha: 0.2);
       } else if (isSelected && !isCorrect) {
-        return Colors.red.withOpacity(0.2);
+        return Colors.red.withValues(alpha: 0.2);
       } else {
-        return Colors.white.withOpacity(0.05);
+        return Colors.white.withValues(alpha: 0.05);
       }
     }
 
     Color getBorderColor() {
       if (!showResult) {
-        return isSelected ? widget.color : Colors.white.withOpacity(0.2);
+        return isSelected ? widget.color : Colors.white.withValues(alpha: 0.2);
       }
 
       if (isCorrect) {
@@ -625,7 +625,7 @@ class _InteractiveQuizScreenState extends State<InteractiveQuizScreen>
       } else if (isSelected && !isCorrect) {
         return Colors.red;
       } else {
-        return Colors.white.withOpacity(0.2);
+        return Colors.white.withValues(alpha: 0.2);
       }
     }
 
@@ -677,7 +677,7 @@ class _InteractiveQuizScreenState extends State<InteractiveQuizScreen>
                   height: 32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: getBorderColor().withOpacity(0.2),
+                    color: getBorderColor().withValues(alpha: 0.2),
                     border: Border.all(color: getBorderColor(), width: 2),
                   ),
                   child: Center(
@@ -729,7 +729,7 @@ class CelebrationPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.8 * (1 - animation))
+      ..color = color.withValues(alpha: 0.8 * (1 - animation))
       ..style = PaintingStyle.fill;
 
     final center = Offset(size.width / 2, size.height / 2);
@@ -740,7 +740,7 @@ class CelebrationPainter extends CustomPainter {
 
     // Draw particles
     final particlePaint = Paint()
-      ..color = Colors.white.withOpacity(0.6 * (1 - animation))
+      ..color = Colors.white.withValues(alpha: 0.6 * (1 - animation))
       ..style = PaintingStyle.fill;
 
     for (int i = 0; i < 12; i++) {

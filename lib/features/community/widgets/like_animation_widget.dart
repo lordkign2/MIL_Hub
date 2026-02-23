@@ -147,8 +147,8 @@ class _LikeAnimationWidgetState extends State<LikeAnimationWidget>
                   height: widget.size,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.red.withOpacity(
-                      0.3 * (1 - _circleAnimation.value),
+                    color: Colors.red.withValues(
+                      alpha: 0.3 * (1 - _circleAnimation.value),
                     ),
                   ),
                 ),

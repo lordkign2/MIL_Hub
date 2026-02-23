@@ -147,7 +147,10 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
         leading: CircleAvatar(
           backgroundColor: widget.themeColor,
           child: Text(
-            (user.displayName ?? 'U').substring(0, 1).toUpperCase(),
+            ((user.displayName ?? '').trim().isNotEmpty
+                    ? (user.displayName ?? '').trim().substring(0, 1)
+                    : 'U')
+                .toUpperCase(),
             style: const TextStyle(color: Colors.white),
           ),
         ),

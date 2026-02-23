@@ -67,13 +67,14 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   }) async {
     try {
       Query query = _firestore
-          .collection('posts')
+          .collection('communityPosts')
+          .where('isArchived', isEqualTo: false)
           .orderBy('createdAt', descending: true)
           .limit(limit);
 
       if (lastPostId != null) {
         final lastPostDoc = await _firestore
-            .collection('posts')
+            .collection('communityPosts')
             .doc(lastPostId)
             .get();
         if (lastPostDoc.exists) {
@@ -91,7 +92,7 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   @override
   Future<PostModel> getPostById(String id) async {
     try {
-      final doc = await _firestore.collection('posts').doc(id).get();
+      final doc = await _firestore.collection('communityPosts').doc(id).get();
       if (!doc.exists) {
         throw const ServerException(message: 'Post not found');
       }
@@ -106,7 +107,7 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   Future<PostModel> createPost(PostModel post) async {
     try {
       final docRef = await _firestore
-          .collection('posts')
+          .collection('communityPosts')
           .add(post.toFirestore());
       final createdPost = post.copyWith(id: docRef.id);
       await docRef.update(createdPost.toFirestore());
@@ -120,7 +121,7 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   Future<PostModel> updatePost(PostModel post) async {
     try {
       await _firestore
-          .collection('posts')
+          .collection('communityPosts')
           .doc(post.id)
           .update(post.toFirestore());
       return post;
@@ -132,7 +133,7 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   @override
   Future<void> deletePost(String id) async {
     try {
-      await _firestore.collection('posts').doc(id).delete();
+      await _firestore.collection('communityPosts').doc(id).delete();
     } catch (e) {
       throw ServerException(message: 'Failed to delete post: $e');
     }
@@ -144,7 +145,7 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
     required String userId,
   }) async {
     try {
-      final postRef = _firestore.collection('posts').doc(postId);
+      final postRef = _firestore.collection('communityPosts').doc(postId);
       await _firestore.runTransaction((transaction) async {
         final postDoc = await transaction.get(postRef);
         if (!postDoc.exists) {
@@ -173,7 +174,7 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
     required String userId,
   }) async {
     try {
-      final postRef = _firestore.collection('posts').doc(postId);
+      final postRef = _firestore.collection('communityPosts').doc(postId);
       await _firestore.runTransaction((transaction) async {
         final postDoc = await transaction.get(postRef);
         if (!postDoc.exists) {
@@ -204,14 +205,15 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   }) async {
     try {
       Query query = _firestore
-          .collection('posts')
+          .collection('communityPosts')
           .where('authorId', isEqualTo: authorId)
+          .where('isArchived', isEqualTo: false)
           .orderBy('createdAt', descending: true)
           .limit(limit);
 
       if (lastPostId != null) {
         final lastPostDoc = await _firestore
-            .collection('posts')
+            .collection('communityPosts')
             .doc(lastPostId)
             .get();
         if (lastPostDoc.exists) {
@@ -234,14 +236,15 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   }) async {
     try {
       Query query = _firestore
-          .collection('posts')
+          .collection('communityPosts')
           .where('tags', arrayContains: tag)
+          .where('isArchived', isEqualTo: false)
           .orderBy('createdAt', descending: true)
           .limit(limit);
 
       if (lastPostId != null) {
         final lastPostDoc = await _firestore
-            .collection('posts')
+            .collection('communityPosts')
             .doc(lastPostId)
             .get();
         if (lastPostDoc.exists) {
@@ -278,7 +281,7 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   @override
   Future<void> pinPost(String postId) async {
     try {
-      await _firestore.collection('posts').doc(postId).update({
+      await _firestore.collection('communityPosts').doc(postId).update({
         'isPinned': true,
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -290,7 +293,7 @@ class FirebasePostRemoteDataSource implements PostRemoteDataSource {
   @override
   Future<void> archivePost(String postId) async {
     try {
-      await _firestore.collection('posts').doc(postId).update({
+      await _firestore.collection('communityPosts').doc(postId).update({
         'isArchived': true,
         'updatedAt': FieldValue.serverTimestamp(),
       });

@@ -191,8 +191,8 @@ class _PersonalizedLearningDashboardState
                     end: Alignment.bottomRight,
                     colors: [
                       widget.themeColor,
-                      widget.themeColor.withOpacity(0.7),
-                      Colors.black.withOpacity(0.8),
+                      widget.themeColor.withValues(alpha: 0.7),
+                      Colors.black.withValues(alpha: 0.8),
                     ],
                   ),
                 ),
@@ -226,7 +226,7 @@ class _PersonalizedLearningDashboardState
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
@@ -262,7 +262,7 @@ class _PersonalizedLearningDashboardState
                                   ) %
                                   1000) /
                               1000,
-                          backgroundColor: Colors.white.withOpacity(0.2),
+                          backgroundColor: Colors.white.withValues(alpha: 0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Colors.white,
                           ),
@@ -481,13 +481,13 @@ class _PersonalizedLearningDashboardState
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        widget.themeColor.withOpacity(0.1),
-                        Colors.black.withOpacity(0.8),
+                        widget.themeColor.withValues(alpha: 0.1),
+                        Colors.black.withValues(alpha: 0.8),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: widget.themeColor.withOpacity(0.3),
+                      color: widget.themeColor.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -533,10 +533,10 @@ class _PersonalizedLearningDashboardState
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getInsightColor(insight.type).withOpacity(0.3),
+          color: _getInsightColor(insight.type).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -546,7 +546,7 @@ class _PersonalizedLearningDashboardState
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _getInsightColor(insight.type).withOpacity(0.2),
+              color: _getInsightColor(insight.type).withValues(alpha: 0.2),
             ),
             child: Icon(
               _getInsightIcon(insight.type),
@@ -604,12 +604,12 @@ class _PersonalizedLearningDashboardState
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            widget.themeColor.withOpacity(0.1),
-            Colors.black.withOpacity(0.8),
+            widget.themeColor.withValues(alpha: 0.1),
+            Colors.black.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+        border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -629,7 +629,7 @@ class _PersonalizedLearningDashboardState
                     gradient: LinearGradient(
                       colors: [
                         widget.themeColor,
-                        widget.themeColor.withOpacity(0.6),
+                        widget.themeColor.withValues(alpha: 0.6),
                       ],
                     ),
                   ),
@@ -681,7 +681,7 @@ class _PersonalizedLearningDashboardState
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: widget.themeColor.withOpacity(0.2),
+                    color: widget.themeColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -746,7 +746,7 @@ class _PersonalizedLearningDashboardState
                                     colors: isToday
                                         ? [
                                             widget.themeColor,
-                                            widget.themeColor.withOpacity(0.5),
+                                            widget.themeColor.withValues(alpha: 0.5),
                                           ]
                                         : [
                                             Colors.grey[600]!,

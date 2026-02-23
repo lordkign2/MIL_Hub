@@ -5,12 +5,19 @@ import '../../features/auth/di/auth_injection.dart';
 import '../../features/learn/di/learn_injection.dart';
 import '../../features/community/di/community_injection.dart';
 import '../../features/check/di/check_injection.dart';
+import '../services/logging/logging_facade.dart';
 
 /// Initialize all core dependencies
 Future<void> initializeDependencies() async {
   // Core services
   sl.registerSingleton<NetworkInfo>(NetworkInfoImpl());
   sl.registerSingleton<HttpClient>(DioHttpClient());
+  
+  // Logging Service - Singleton for consistent configuration
+  sl.registerSingleton<LoggingService>(LoggingServiceImpl());
+  
+  // Error Handler - Singleton that uses the logging service
+  sl.registerSingleton<ErrorHandler>(ErrorHandler(sl.get<LoggingService>()));
 }
 
 /// Initialize feature-specific dependencies

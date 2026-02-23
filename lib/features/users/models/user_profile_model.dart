@@ -58,6 +58,29 @@ class UserProfile {
     );
   }
 
+  factory UserProfile.fromMap(Map<String, dynamic> data) {
+    return UserProfile(
+      uid: data['uid'] ?? '',
+      displayName: data['displayName'] ?? '',
+      email: data['email'] ?? '',
+      photoURL: data['photoURL'],
+      bio: data['bio'],
+      joinedDate:
+          (data['joinedDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      lastActiveDate:
+          (data['lastActiveDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      role: UserRole.values.firstWhere(
+        (r) => r.toString() == 'UserRole.${data['role']}',
+        orElse: () => UserRole.student,
+      ),
+      preferences: UserPreferences.fromMap(data['preferences'] ?? {}),
+      stats: UserStats.fromMap(data['stats'] ?? {}),
+      interests: List<String>.from(data['interests'] ?? []),
+      achievements: Map<String, dynamic>.from(data['achievements'] ?? {}),
+      subscription: UserSubscription.fromMap(data['subscription'] ?? {}),
+    );
+  }
+
   Map<String, dynamic> toFirestore() {
     return {
       'displayName': displayName,

@@ -113,8 +113,8 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
             end: Alignment.bottomRight,
             colors: [
               widget.themeColor,
-              widget.themeColor.withOpacity(0.7),
-              Colors.black.withOpacity(0.8),
+              widget.themeColor.withValues(alpha: 0.7),
+              Colors.black.withValues(alpha: 0.8),
             ],
           ),
         ),
@@ -147,7 +147,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -178,7 +178,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -271,10 +271,10 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [color.withOpacity(0.2), Colors.black.withOpacity(0.8)],
+          colors: [color.withValues(alpha: 0.2), Colors.black.withValues(alpha: 0.8)],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -388,10 +388,10 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [color.withOpacity(0.2), Colors.black.withOpacity(0.8)],
+            colors: [color.withValues(alpha: 0.2), Colors.black.withValues(alpha: 0.8)],
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: isWide
             ? Row(
@@ -401,7 +401,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                     height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                     ),
                     child: Icon(icon, color: color, size: 28),
                   ),
@@ -434,7 +434,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                   ),
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: color.withOpacity(0.7),
+                    color: color.withValues(alpha: 0.7),
                     size: 20,
                   ),
                 ],
@@ -447,7 +447,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                     height: 50,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                     ),
                     child: Icon(icon, color: color, size: 24),
                   ),
@@ -488,9 +488,9 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -524,7 +524,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                               margin: const EdgeInsets.only(bottom: 8),
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(
@@ -534,7 +534,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                                     height: 30,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: widget.themeColor.withOpacity(0.2),
+                                      color: widget.themeColor.withValues(alpha: 0.2),
                                     ),
                                     child: Icon(
                                       Icons.military_tech_rounded,
@@ -573,13 +573,13 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                             Icon(
                               Icons.emoji_events_outlined,
                               size: 48,
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                             ),
                             const SizedBox(height: 12),
                             Text(
                               'No recent activity',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.6),
+                                color: Colors.white.withValues(alpha: 0.6),
                                 fontSize: 14,
                               ),
                             ),
@@ -587,7 +587,7 @@ class _GamificationHubScreenState extends State<GamificationHubScreen>
                             Text(
                               'Start learning to earn badges and XP!',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.4),
+                                color: Colors.white.withValues(alpha: 0.4),
                                 fontSize: 12,
                               ),
                             ),

@@ -21,11 +21,15 @@ class PostsLoaded extends CommunityState {
   final List<PostEntity> posts;
   final Map<String, List<CommentEntity>> comments; // postId -> comments
   final bool hasMorePosts;
+  final bool isLoadingMore;
+  final bool isRefreshing;
 
   const PostsLoaded({
     required this.posts,
     required this.comments,
     required this.hasMorePosts,
+    this.isLoadingMore = false,
+    this.isRefreshing = false,
   });
 
   @override
@@ -35,11 +39,17 @@ class PostsLoaded extends CommunityState {
           runtimeType == other.runtimeType &&
           posts == other.posts &&
           comments == other.comments &&
-          hasMorePosts == other.hasMorePosts;
+          hasMorePosts == other.hasMorePosts &&
+          isLoadingMore == other.isLoadingMore &&
+          isRefreshing == other.isRefreshing;
 
   @override
   int get hashCode =>
-      posts.hashCode ^ comments.hashCode ^ hasMorePosts.hashCode;
+      posts.hashCode ^
+      comments.hashCode ^
+      hasMorePosts.hashCode ^
+      isLoadingMore.hashCode ^
+      isRefreshing.hashCode;
 }
 
 /// Loaded state with a single post

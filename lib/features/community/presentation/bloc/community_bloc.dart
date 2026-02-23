@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../../domain/entities/post_entity.dart';
 import '../../domain/usecases/create_comment.dart';
 import '../../domain/usecases/create_post.dart';
 import '../../domain/usecases/get_all_posts.dart';
@@ -80,7 +81,32 @@ class CommunityBloc {
   }
 
   Future<void> _handleLoadPosts(LoadPostsEvent event) async {
-    _emitState(const CommunityLoading());
+    final currentState = _state;
+    final isLoadMore = event.lastPostId != null;
+
+    if (isLoadMore && currentState is PostsLoaded) {
+      _emitState(
+        PostsLoaded(
+          posts: currentState.posts,
+          comments: currentState.comments,
+          hasMorePosts: currentState.hasMorePosts,
+          isLoadingMore: true,
+          isRefreshing: currentState.isRefreshing,
+        ),
+      );
+    } else if (currentState is PostsLoaded) {
+      _emitState(
+        PostsLoaded(
+          posts: currentState.posts,
+          comments: currentState.comments,
+          hasMorePosts: currentState.hasMorePosts,
+          isLoadingMore: false,
+          isRefreshing: true,
+        ),
+      );
+    } else {
+      _emitState(const CommunityLoading());
+    }
 
     final result = await _getAllPosts(
       limit: event.limit,
@@ -88,13 +114,35 @@ class CommunityBloc {
     );
 
     if (result.posts != null) {
-      _emitState(
-        PostsLoaded(
-          posts: result.posts!,
-          comments: {}, // Initialize empty comments map
-          hasMorePosts: result.posts!.length == event.limit,
-        ),
-      );
+      if (isLoadMore && currentState is PostsLoaded) {
+        final existingIds = currentState.posts.map((p) => p.id).toSet();
+        final combined = <PostEntity>[...currentState.posts];
+        for (final post in result.posts!) {
+          if (!existingIds.contains(post.id)) {
+            combined.add(post);
+          }
+        }
+
+        _emitState(
+          PostsLoaded(
+            posts: combined,
+            comments: currentState.comments,
+            hasMorePosts: result.posts!.length == event.limit,
+            isLoadingMore: false,
+            isRefreshing: false,
+          ),
+        );
+      } else {
+        _emitState(
+          PostsLoaded(
+            posts: result.posts!,
+            comments: {},
+            hasMorePosts: result.posts!.length == event.limit,
+            isLoadingMore: false,
+            isRefreshing: false,
+          ),
+        );
+      }
     } else {
       _emitState(
         CommunityError(
@@ -173,7 +221,19 @@ class CommunityBloc {
   }
 
   Future<void> _handleRefreshPosts(RefreshPostsEvent event) async {
-    // Force refresh by clearing any cache and reloading
+    final currentState = _state;
+    if (currentState is PostsLoaded) {
+      _emitState(
+        PostsLoaded(
+          posts: currentState.posts,
+          comments: currentState.comments,
+          hasMorePosts: currentState.hasMorePosts,
+          isLoadingMore: false,
+          isRefreshing: true,
+        ),
+      );
+    }
+
     add(const LoadPostsEvent());
   }
 

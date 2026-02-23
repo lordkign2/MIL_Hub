@@ -108,8 +108,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                     end: Alignment.bottomRight,
                     colors: [
                       widget.themeColor,
-                      widget.themeColor.withOpacity(0.7),
-                      Colors.black.withOpacity(0.8),
+                      widget.themeColor.withValues(alpha: 0.7),
+                      Colors.black.withValues(alpha: 0.8),
                     ],
                   ),
                 ),
@@ -139,7 +139,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black.withValues(alpha: 0.3),
                                     blurRadius: 15,
                                     spreadRadius: 3,
                                   ),
@@ -238,7 +238,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [widget.themeColor.withOpacity(0.7), widget.themeColor],
+          colors: [widget.themeColor.withValues(alpha: 0.7), widget.themeColor],
         ),
       ),
       child: const Icon(Icons.person_rounded, color: Colors.white, size: 60),
@@ -360,9 +360,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -410,9 +410,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+        border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -492,9 +492,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -523,9 +523,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+        border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -599,7 +599,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -627,7 +627,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
             ),
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white.withValues(alpha: 0.5),
               size: 16,
             ),
           ],
@@ -641,9 +641,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -712,7 +712,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -745,7 +745,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
             if (onTap != null)
               Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 size: 16,
               ),
           ],
@@ -796,7 +796,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
       if (image != null) {
         // TODO: Upload image to storage and update profile
-        print('Selected image: ${image.path}');
+        // print('Selected image: ${image.path}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Photo updated successfully!'),
@@ -843,6 +843,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
         _isSaving = false;
       });
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Profile updated successfully!'),
@@ -862,27 +864,27 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   void _editLearningGoal() {
     // TODO: Show learning goal edit dialog
-    print('Edit learning goal');
+    // print('Edit learning goal');
   }
 
   void _editTopics() {
     // TODO: Show topics selection dialog
-    print('Edit topics');
+    // print('Edit topics');
   }
 
   void _navigateToNotificationSettings() {
     // TODO: Navigate to notification settings
-    print('Navigate to notification settings');
+    // print('Navigate to notification settings');
   }
 
   void _navigateToPrivacySettings() {
     // TODO: Navigate to privacy settings
-    print('Navigate to privacy settings');
+    // print('Navigate to privacy settings');
   }
 
   void _exportUserData() {
     // TODO: Implement data export
-    print('Export user data');
+    // print('Export user data');
   }
 
   void _showDeleteAccountDialog() {
@@ -918,9 +920,13 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   Future<void> _deleteAccount() async {
     try {
       await UserService.deleteUserAccount();
+      
+      if (!mounted) return;
+      
       // Navigate to login screen
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to delete account: $e'),

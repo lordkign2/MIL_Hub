@@ -12,8 +12,8 @@ class UserService {
   );
   static final CollectionReference _userActivitiesCollection = _firestore
       .collection('userActivities');
-  static final CollectionReference _userSettingsCollection = _firestore
-      .collection('userSettings');
+  // static final CollectionReference _userSettingsCollection = _firestore
+  //     .collection('userSettings');
 
   // Get current user profile
   static Stream<UserProfile?> getCurrentUserProfile() {
@@ -143,7 +143,7 @@ class UserService {
         .snapshots()
         .map((snapshot) {
           return snapshot.docs.map((doc) {
-            final data = doc.data() as Map<String, dynamic>;
+            // final data = doc.data() as Map<String, dynamic>;
             return UserActivity.fromFirestore(doc);
           }).toList();
         });
@@ -340,7 +340,7 @@ class UserService {
       });
     } catch (e) {
       // Silently fail for this non-critical update
-      print('Failed to update last active: $e');
+      // print('Failed to update last active: $e');
     }
   }
 
@@ -391,8 +391,8 @@ class UserService {
   static UserAnalytics _calculateUserAnalytics(UserProfile profile) {
     // Calculate analytics based on profile data and recent activities
     final now = DateTime.now();
-    final thisWeek = now.subtract(const Duration(days: 7));
-    final thisMonth = DateTime(now.year, now.month, 1);
+    // final thisWeek = now.subtract(const Duration(days: 7));
+    // final thisMonth = DateTime(now.year, now.month, 1);
 
     // For simplicity in this example, we're using profile stats
     // In a real implementation, you would query recent activities

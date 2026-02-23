@@ -411,8 +411,9 @@ class _ShareCheckScreenState extends State<ShareCheckScreen>
           ...(_detectedUrls.map(
             (url) => RadioListTile<String>(
               value: url,
+              // ignore: deprecated_member_use
               groupValue: _selectedUrl,
-              toggleable: true,
+              // ignore: deprecated_member_use
               onChanged: (value) => setState(() {
                 if (_selectedUrl == url) {
                   _selectedUrl = null;

@@ -73,11 +73,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         _emailController.text.trim(),
                         _passwordController.text.trim(),
                       );
+                      if (!mounted) return;
                       setState(() => _isSigningIn = false);
                       if (result.user != null) {
-                        if (mounted) {
-                          Navigator.pushReplacementNamed(context, "/home");
-                        }
+                        Navigator.pushReplacementNamed(context, "/home");
                       } else {
                         setState(() {
                           _errorMessage = result.error ?? "Login failed";
@@ -124,17 +123,14 @@ class _LoginScreenState extends State<LoginScreen> {
               if (_isSigningIn) return;
               setState(() => _isSigningIn = true);
               final user = await AuthService().signInWithGoogle();
+              if (!mounted) return;
               setState(() => _isSigningIn = false);
               if (user != null) {
-                if (mounted) {
-                  Navigator.pushReplacementNamed(context, "/home");
-                }
+                Navigator.pushReplacementNamed(context, "/home");
               } else {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Google Sign-In failed")),
-                  );
-                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Google Sign-In failed")),
+                );
               }
             }, isSigningIn: _isSigningIn),
 

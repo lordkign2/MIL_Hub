@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/post_model.dart';
 import '../services/community_service.dart';
@@ -25,16 +26,18 @@ class _CommunityScreenState extends State<CommunityScreen>
   final List<String> _selectedTags = [];
   String _searchQuery = '';
   bool _isLoading = false;
-  final bool _hasMorePosts = true;
+  bool _hasMorePosts = true;
   DocumentSnapshot? _lastDocument;
+  String? _errorMessage;
   bool _showSearch = false;
+  static const int _pageSize = 20;
 
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
     _setupScrollListener();
-    _loadInitialPosts();
+    _refreshPosts();
   }
 
   void _initializeAnimations() {
@@ -50,33 +53,94 @@ class _CommunityScreenState extends State<CommunityScreen>
 
   void _setupScrollListener() {
     _scrollController.addListener(() {
-      // Load more posts only when scrolling down and near bottom
-      if (_scrollController.position.pixels >
-          _scrollController.position.maxScrollExtent - 1000) {
+      final position = _scrollController.position;
+      if (!position.hasPixels) return;
+
+      // Load older posts only when user is scrolling down (towards bottom)
+      // and is near the end of the list.
+      if (position.userScrollDirection == ScrollDirection.reverse &&
+          position.extentAfter < 600) {
         _loadMorePosts();
       }
     });
   }
 
-  Future<void> _loadInitialPosts() async {
+  Future<void> _refreshPosts() async {
+    if (_isLoading) return;
+
     setState(() {
       _isLoading = true;
+      _errorMessage = null;
+      _hasMorePosts = true;
+      _lastDocument = null;
+      _posts.clear();
     });
 
     try {
-      // Using a simple approach for now - we'll stream the posts
-      // In a production app, you'd implement proper pagination
+      await _fetchPostsPage(loadMore: false);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading posts: $e')));
-      }
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Error loading posts: $e';
+      });
     } finally {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _fetchPostsPage({required bool loadMore}) async {
+    Query query = FirebaseFirestore.instance
+        .collection('communityPosts')
+        .where('isArchived', isEqualTo: false)
+        .orderBy('createdAt', descending: true);
+
+    if (_searchQuery.isNotEmpty) {
+      query = query
+          .where('content', isGreaterThanOrEqualTo: _searchQuery)
+          .where('content', isLessThan: '${_searchQuery}z');
+    }
+
+    if (_selectedTags.isNotEmpty) {
+      query = query.where('tags', arrayContainsAny: _selectedTags);
+    }
+
+    if (loadMore && _lastDocument != null) {
+      query = query.startAfterDocument(_lastDocument!);
+    }
+
+    final snapshot = await query.limit(_pageSize).get();
+
+    final newPosts = snapshot.docs
+        .map((doc) => PostModel.fromFirestore(doc))
+        .toList();
+
+    if (!loadMore) {
+      _posts
+        ..clear()
+        ..addAll(newPosts);
+    } else {
+      final existingIds = _posts.map((p) => p.id).toSet();
+      for (final post in newPosts) {
+        if (!existingIds.contains(post.id)) {
+          _posts.add(post);
+        }
+      }
+    }
+
+    _posts.sort((a, b) {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return b.createdAt.compareTo(a.createdAt);
+    });
+
+    if (snapshot.docs.isNotEmpty) {
+      _lastDocument = snapshot.docs.last;
+    }
+
+    _hasMorePosts = snapshot.docs.length == _pageSize;
   }
 
   Future<void> _loadMorePosts() async {
@@ -87,13 +151,12 @@ class _CommunityScreenState extends State<CommunityScreen>
     });
 
     try {
-      // Implementation for loading more posts would go here
-      // For now, we'll use the stream approach
+      await _fetchPostsPage(loadMore: true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading more posts: $e')));
+        setState(() {
+          _errorMessage = 'Error loading more posts: $e';
+        });
       }
     } finally {
       setState(() {
@@ -106,7 +169,7 @@ class _CommunityScreenState extends State<CommunityScreen>
     setState(() {
       _searchQuery = query;
     });
-    // Debounce search if needed
+    _refreshPosts();
   }
 
   void _toggleTag(String tag) {
@@ -117,6 +180,7 @@ class _CommunityScreenState extends State<CommunityScreen>
         _selectedTags.add(tag);
       }
     });
+    _refreshPosts();
   }
 
   void _showPostCreator() {
@@ -156,15 +220,19 @@ class _CommunityScreenState extends State<CommunityScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          _buildSliverAppBar(),
-          if (_showSearch) _buildSearchSection(),
-          _buildTrendingTags(),
-          _buildPostsList(),
-          if (_isLoading) _buildLoadingIndicator(),
-        ],
+      body: RefreshIndicator(
+        onRefresh: _refreshPosts,
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            _buildSliverAppBar(),
+            if (_showSearch) _buildSearchSection(),
+            _buildTrendingTags(),
+            _buildPostsList(),
+            if (_isLoading && _posts.isNotEmpty) _buildLoadingIndicator(),
+          ],
+        ),
       ),
       floatingActionButton: AnimatedBuilder(
         animation: _fabScaleAnimation,
@@ -337,124 +405,100 @@ class _CommunityScreenState extends State<CommunityScreen>
   }
 
   Widget _buildPostsList() {
-    return StreamBuilder<List<PostModel>>(
-      stream: CommunityService.getPostsStream(
-        searchQuery: _searchQuery.isNotEmpty ? _searchQuery : null,
-        tags: _selectedTags.isNotEmpty ? _selectedTags : null,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SliverToBoxAdapter(
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        }
-
-        if (snapshot.hasError) {
-          return SliverToBoxAdapter(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 48,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Error loading posts',
-                      style: TextStyle(color: Colors.grey[400], fontSize: 16),
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {}); // Trigger rebuild
-                      },
-                      child: const Text('Retry'),
-                    ),
-                  ],
+    if (_errorMessage != null) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              children: [
+                const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                const SizedBox(height: 16),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.grey[400], fontSize: 16),
+                  softWrap: true,
                 ),
-              ),
+                const SizedBox(height: 8),
+                TextButton(onPressed: _refreshPosts, child: const Text('Retry')),
+              ],
             ),
-          );
-        }
+          ),
+        ),
+      );
+    }
 
-        final posts = snapshot.data ?? [];
+    if (_posts.isEmpty && _isLoading) {
+      return const SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(32),
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
 
-        if (posts.isEmpty) {
-          return SliverToBoxAdapter(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.forum_outlined,
-                      size: 64,
-                      color: Colors.grey[600],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      _searchQuery.isNotEmpty || _selectedTags.isNotEmpty
-                          ? 'No posts found'
-                          : 'No posts yet',
-                      style: TextStyle(
-                        color: Colors.grey[400],
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _searchQuery.isNotEmpty || _selectedTags.isNotEmpty
-                          ? 'Try adjusting your search or filters'
-                          : 'Be the first to share something!',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (_searchQuery.isEmpty && _selectedTags.isEmpty) ...[
-                      const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: _showPostCreator,
-                        icon: const Icon(Icons.add),
-                        label: const Text('Create Post'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
+    if (_posts.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              children: [
+                Icon(Icons.forum_outlined, size: 64, color: Colors.grey[600]),
+                const SizedBox(height: 16),
+                Text(
+                  _searchQuery.isNotEmpty || _selectedTags.isNotEmpty
+                      ? 'No posts found'
+                      : 'No posts yet',
+                  style: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
+                const SizedBox(height: 8),
+                Text(
+                  _searchQuery.isNotEmpty || _selectedTags.isNotEmpty
+                      ? 'Try adjusting your search or filters'
+                      : 'Be the first to share something!',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (_searchQuery.isEmpty && _selectedTags.isEmpty) ...[
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _showPostCreator,
+                    icon: const Icon(Icons.add),
+                    label: const Text('Create Post'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
-          );
-        }
+          ),
+        ),
+      );
+    }
 
-        return SliverList(
-          delegate: SliverChildBuilderDelegate((context, index) {
-            final post = posts[index];
-            return ElegantPostCard(
-              post: post,
-              onComment: () => _navigateToComments(post),
-            );
-          }, childCount: posts.length),
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final post = _posts[index];
+        return ElegantPostCard(
+          post: post,
+          onComment: () => _navigateToComments(post),
         );
-      },
+      }, childCount: _posts.length),
     );
   }
 

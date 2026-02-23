@@ -117,8 +117,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                     end: Alignment.bottomRight,
                     colors: [
                       widget.themeColor,
-                      widget.themeColor.withOpacity(0.7),
-                      Colors.black.withOpacity(0.8),
+                      widget.themeColor.withValues(alpha: 0.7),
+                      Colors.black.withValues(alpha: 0.8),
                     ],
                   ),
                 ),
@@ -177,7 +177,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     return Container(
       height: 40,
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.black.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -221,9 +221,9 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -252,13 +252,13 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
             Icon(
               Icons.leaderboard_rounded,
               size: 64,
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
               'No leaderboard data available',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 16,
               ),
             ),
@@ -285,7 +285,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey[900]!.withOpacity(0.5),
+                    color: Colors.grey[900]!.withValues(alpha: 0.5),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
@@ -386,7 +386,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [getPlaceColor(), getPlaceColor().withOpacity(0.6)],
+                    colors: [getPlaceColor(), getPlaceColor().withValues(alpha: 0.6)],
                   ),
                   border: Border.all(color: getPlaceColor(), width: 2),
                 ),
@@ -439,8 +439,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      getPlaceColor().withOpacity(0.8),
-                      getPlaceColor().withOpacity(0.4),
+                      getPlaceColor().withValues(alpha: 0.8),
+                      getPlaceColor().withValues(alpha: 0.4),
                     ],
                   ),
                   borderRadius: const BorderRadius.only(
@@ -479,13 +479,13 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isCurrentUser
-            ? widget.themeColor.withOpacity(0.2)
-            : Colors.black.withOpacity(0.3),
+            ? widget.themeColor.withValues(alpha: 0.2)
+            : Colors.black.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isCurrentUser
-              ? widget.themeColor.withOpacity(0.5)
-              : Colors.white.withOpacity(0.1),
+              ? widget.themeColor.withValues(alpha: 0.5)
+              : Colors.white.withValues(alpha: 0.1),
         ),
       ),
       child: Row(
@@ -496,7 +496,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
             height: 30,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: widget.themeColor.withOpacity(0.2),
+              color: widget.themeColor.withValues(alpha: 0.2),
             ),
             child: Center(
               child: Text(
@@ -519,7 +519,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
-                colors: [widget.themeColor, widget.themeColor.withOpacity(0.6)],
+                colors: [widget.themeColor, widget.themeColor.withValues(alpha: 0.6)],
               ),
             ),
             child: Center(

@@ -23,9 +23,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
   late Animation<double> _headerAnimation;
   late Animation<double> _cardsAnimation;
 
-  UserProfile? _userProfile;
   UserAnalytics? _analytics;
-  final List<UserActivity> _recentActivities = [];
   bool _isLoading = true;
 
   @override
@@ -57,18 +55,18 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
 
   Future<void> _loadUserData() async {
     try {
-      print('🔄 Starting to load user data...');
+      // print('Starting to load user data...');
       setState(() => _isLoading = true);
 
       // Get the current user profile first
       final currentUser = UserService.auth.currentUser;
       if (currentUser == null) {
-        print('❌ No authenticated user found');
+        // print('No authenticated user found');
         setState(() => _isLoading = false);
         return;
       }
 
-      print('✅ Current user found: ${currentUser.uid}');
+      // print('Current user found: ${currentUser.uid}');
 
       // Check if profile exists
       final profileDoc = await UserService.usersCollection
@@ -76,24 +74,24 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
           .get();
 
       if (!profileDoc.exists) {
-        print('🆕 Profile does not exist, initializing...');
+        // print('Profile does not exist, initializing...');
         // Initialize new user profile
         await UserService.initializeNewUserProfile();
-        print('✅ Profile initialized successfully');
+        // print('Profile initialized successfully');
         // Wait a moment for the profile to be created
         await Future.delayed(const Duration(milliseconds: 1000));
       } else {
-        print('✅ Profile exists, continuing...');
+        // print('Profile exists, continuing...');
       }
 
       // Load analytics with fallback
       UserAnalytics? analytics;
       try {
-        print('📊 Loading user analytics...');
+        // print('Loading user analytics...');
         analytics = await UserService.getUserAnalytics();
-        print('✅ Analytics loaded successfully');
+        // print('Analytics loaded successfully');
       } catch (analyticsError) {
-        print('⚠️ Error loading analytics: $analyticsError');
+        // print('Error loading analytics: $analyticsError');
         // Create default analytics
         analytics = UserAnalytics(
           totalActivities: 0,
@@ -107,23 +105,23 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
           joinedDays: 0,
           lastActiveAgo: 0,
         );
-        print('✅ Using default analytics');
+        // print('Using default analytics');
       }
 
-      print('🎯 Setting state with loaded data...');
+      // print('Setting state with loaded data...');
       setState(() {
         _analytics = analytics;
         _isLoading = false;
       });
 
-      print('🎬 Starting animations...');
+      // print('Starting animations...');
       // Start animations
       _headerController.forward();
       await Future.delayed(const Duration(milliseconds: 200));
       _cardsController.forward();
-      print('🎉 Dashboard loaded successfully!');
+      // print('Dashboard loaded successfully!');
     } catch (e) {
-      print('💥 Error loading user data: $e');
+      // print('Error loading user data: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -177,14 +175,14 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
   Widget _buildDashboardHeader() {
     return SliverAppBar(
       backgroundColor: Colors.transparent,
-      expandedHeight: 220,
+      expandedHeight: 280,
       pinned: true,
       flexibleSpace: StreamBuilder<UserProfile?>(
         stream: UserService.getCurrentUserProfile(),
         builder: (context, snapshot) {
           // Handle errors
           if (snapshot.hasError) {
-            print('StreamBuilder error: ${snapshot.error}');
+            // print('StreamBuilder error: ${snapshot.error}');
             return Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -192,8 +190,8 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                   end: Alignment.bottomRight,
                   colors: [
                     widget.themeColor,
-                    widget.themeColor.withOpacity(0.7),
-                    Colors.black.withOpacity(0.8),
+                    widget.themeColor.withValues(alpha: 0.7),
+                    Colors.black.withValues(alpha: 0.8),
                   ],
                 ),
               ),
@@ -201,8 +199,8 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                 padding: EdgeInsets.only(
                   left: 20,
                   right: 20,
-                  bottom: 30,
-                  top: 100,
+                  bottom: 20,
+                  top: 80,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -236,8 +234,8 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                   end: Alignment.bottomRight,
                   colors: [
                     widget.themeColor,
-                    widget.themeColor.withOpacity(0.7),
-                    Colors.black.withOpacity(0.8),
+                    widget.themeColor.withValues(alpha: 0.7),
+                    Colors.black.withValues(alpha: 0.8),
                   ],
                 ),
               ),
@@ -258,8 +256,8 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                   end: Alignment.bottomRight,
                   colors: [
                     widget.themeColor,
-                    widget.themeColor.withOpacity(0.7),
-                    Colors.black.withOpacity(0.8),
+                    widget.themeColor.withValues(alpha: 0.7),
+                    Colors.black.withValues(alpha: 0.8),
                   ],
                 ),
               ),
@@ -267,8 +265,8 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                 padding: EdgeInsets.only(
                   left: 20,
                   right: 20,
-                  bottom: 30,
-                  top: 100,
+                  bottom: 20,
+                  top: 80,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -299,8 +297,8 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                         end: Alignment.bottomRight,
                         colors: [
                           widget.themeColor,
-                          widget.themeColor.withOpacity(0.7),
-                          Colors.black.withOpacity(0.8),
+                          widget.themeColor.withValues(alpha: 0.7),
+                          Colors.black.withValues(alpha: 0.8),
                         ],
                       ),
                     ),
@@ -308,8 +306,8 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                       padding: const EdgeInsets.only(
                         left: 20,
                         right: 20,
-                        bottom: 30,
-                        top: 100,
+                        bottom: 20,
+                        top: 80,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +329,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.3),
+                                        color: Colors.black.withValues(alpha: 0.3),
                                         blurRadius: 10,
                                         spreadRadius: 2,
                                       ),
@@ -360,7 +358,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      profile.displayName ?? 'User',
+                                      profile.displayName,
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 24,
@@ -371,7 +369,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      profile.email ?? '',
+                                      profile.email,
                                       style: const TextStyle(
                                         color: Colors.white70,
                                         fontSize: 14,
@@ -429,7 +427,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [widget.themeColor.withOpacity(0.7), widget.themeColor],
+          colors: [widget.themeColor.withValues(alpha: 0.7), widget.themeColor],
         ),
       ),
       child: const Icon(Icons.person_rounded, color: Colors.white, size: 40),
@@ -440,9 +438,9 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -493,10 +491,10 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: widget.themeColor.withOpacity(0.2),
+                            color: widget.themeColor.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: widget.themeColor.withOpacity(0.3),
+                              color: widget.themeColor.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
@@ -530,7 +528,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 1.4,
+                      childAspectRatio: 1.15,
                       children: [
                         _buildEnhancedStatCard(
                           'Current Streak',
@@ -591,50 +589,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
     );
   }
 
-  Widget _buildStatCard(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        // TODO: Navigate to detailed stats
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [color.withOpacity(0.2), Colors.black.withOpacity(0.8)],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                color: color,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              label,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildEnhancedStatCard(
     String label,
@@ -656,16 +611,16 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              color.withOpacity(0.3),
-              color.withOpacity(0.1),
-              Colors.black.withOpacity(0.7),
+              color.withValues(alpha: 0.3),
+              color.withValues(alpha: 0.1),
+              Colors.black.withValues(alpha: 0.7),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.4), width: 1.5),
+          border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -680,7 +635,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
+                    color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: color, size: 20),
@@ -692,7 +647,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.2),
+                      color: Colors.green.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -718,7 +673,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
             Text(
               unit,
               style: TextStyle(
-                color: color.withOpacity(0.7),
+                color: color.withValues(alpha: 0.7),
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
               ),
@@ -751,9 +706,9 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -817,7 +772,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
           height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
@@ -919,9 +874,9 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.3),
+        color: Colors.grey[900]!.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
@@ -989,7 +944,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
       height: 32,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
       ),
       child: Icon(icon, color: color, size: 16),
     );
@@ -1003,13 +958,13 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
           Icon(
             Icons.history_rounded,
             size: 48,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
             'No recent activity',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 16,
             ),
           ),
@@ -1017,7 +972,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
           Text(
             'Start learning to see your progress here!',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.4),
+              color: Colors.white.withValues(alpha: 0.4),
               fontSize: 12,
             ),
           ),
@@ -1057,7 +1012,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.2),
+                            color: Colors.grey.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -1091,7 +1046,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 2.2,
+                      childAspectRatio: 1.85,
                       children: [
                         _buildEnhancedActionButton(
                           'Edit Profile',
@@ -1136,46 +1091,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
     );
   }
 
-  Widget _buildActionButton(
-    String label,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        onTap();
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [color.withOpacity(0.2), Colors.black.withOpacity(0.8)],
-          ),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildEnhancedActionButton(
     String title,
@@ -1190,22 +1106,22 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
         onTap();
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              color.withOpacity(0.2),
-              color.withOpacity(0.1),
-              Colors.black.withOpacity(0.8),
+              color.withValues(alpha: 0.2),
+              color.withValues(alpha: 0.1),
+              Colors.black.withValues(alpha: 0.8),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
@@ -1214,16 +1130,17 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: color, size: 20),
+              child: Icon(icon, color: color, size: 18),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1231,21 +1148,25 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                     title,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     subtitle,
-                    style: TextStyle(color: Colors.grey[400], fontSize: 10),
+                    style: TextStyle(color: Colors.grey[400], fontSize: 9),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: color.withOpacity(0.6),
-              size: 16,
+              color: color.withValues(alpha: 0.6),
+              size: 14,
             ),
           ],
         ),
@@ -1320,7 +1241,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
                       crossAxisCount: 3,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
-                      childAspectRatio: 1.1,
+                      childAspectRatio: 0.9,
                       children: [
                         _buildNavigationCard(
                           'Learn',
@@ -1373,16 +1294,16 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              color.withOpacity(0.3),
-              color.withOpacity(0.1),
-              Colors.black.withOpacity(0.6),
+              color.withValues(alpha: 0.3),
+              color.withValues(alpha: 0.1),
+              Colors.black.withValues(alpha: 0.6),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.4), width: 1.5),
+          border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -1396,7 +1317,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -1457,7 +1378,7 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            CommunityScreen(),
+            const CommunityScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
@@ -1506,31 +1427,31 @@ class _EnhancedUserDashboardState extends State<EnhancedUserDashboard>
   void _navigateToSettings() {
     HapticFeedback.lightImpact();
     // TODO: Navigate to settings screen
-    print('Navigate to settings');
+    // print('Navigate to settings');
   }
 
   void _navigateToFullActivity() {
     // TODO: Navigate to full activity screen
-    print('Navigate to full activity');
+    // print('Navigate to full activity');
   }
 
   void _navigateToEditProfile() {
     // TODO: Navigate to edit profile screen
-    print('Navigate to edit profile');
+    // print('Navigate to edit profile');
   }
 
   void _navigateToAchievements() {
     // TODO: Navigate to achievements screen
-    print('Navigate to achievements');
+    // print('Navigate to achievements');
   }
 
   void _navigateToStatistics() {
     // TODO: Navigate to statistics screen
-    print('Navigate to statistics');
+    // print('Navigate to statistics');
   }
 
   void _navigateToPrivacy() {
     // TODO: Navigate to privacy screen
-    print('Navigate to privacy');
+    // print('Navigate to privacy');
   }
 }

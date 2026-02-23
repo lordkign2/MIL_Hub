@@ -119,7 +119,7 @@ class _BadgesScreenState extends State<BadgesScreen>
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [widget.themeColor, Colors.black.withOpacity(0.8)],
+            colors: [widget.themeColor, Colors.black.withValues(alpha: 0.8)],
           ),
         ),
         child: Padding(
@@ -258,9 +258,9 @@ class _BadgesScreenState extends State<BadgesScreen>
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.grey[900]!.withOpacity(0.5),
+          color: Colors.grey[900]!.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+          border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
@@ -286,9 +286,9 @@ class _BadgesScreenState extends State<BadgesScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+        border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
       ),
       child: DropdownButton<BadgeCategory?>(
         value: _selectedCategory,
@@ -325,9 +325,9 @@ class _BadgesScreenState extends State<BadgesScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+        border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
       ),
       child: DropdownButton<BadgeRarity?>(
         value: _selectedRarity,
@@ -370,19 +370,19 @@ class _BadgesScreenState extends State<BadgesScreen>
             end: Alignment.bottomRight,
             colors: isUnlocked
                 ? [
-                    _getRarityColor(badge.rarity).withOpacity(0.3),
-                    Colors.black.withOpacity(0.8),
+                    _getRarityColor(badge.rarity).withValues(alpha: 0.3),
+                    Colors.black.withValues(alpha: 0.8),
                   ]
                 : [
-                    Colors.grey[800]!.withOpacity(0.3),
-                    Colors.black.withOpacity(0.8),
+                    Colors.grey[800]!.withValues(alpha: 0.3),
+                    Colors.black.withValues(alpha: 0.8),
                   ],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isUnlocked
-                ? _getRarityColor(badge.rarity).withOpacity(0.5)
-                : Colors.white.withOpacity(0.1),
+                ? _getRarityColor(badge.rarity).withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.1),
             width: 2,
           ),
         ),
@@ -399,7 +399,7 @@ class _BadgesScreenState extends State<BadgesScreen>
                   colors: isUnlocked
                       ? [
                           _getRarityColor(badge.rarity),
-                          _getRarityColor(badge.rarity).withOpacity(0.6),
+                          _getRarityColor(badge.rarity).withValues(alpha: 0.6),
                         ]
                       : [Colors.grey[600]!, Colors.grey[800]!],
                 ),
@@ -432,7 +432,7 @@ class _BadgesScreenState extends State<BadgesScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: _getRarityColor(badge.rarity).withOpacity(0.2),
+                color: _getRarityColor(badge.rarity).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -536,7 +536,7 @@ class BadgeDetailDialog extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.grey[900],
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: themeColor.withOpacity(0.3), width: 2),
+          border: Border.all(color: themeColor.withValues(alpha: 0.3), width: 2),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -547,7 +547,7 @@ class BadgeDetailDialog extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [themeColor, themeColor.withOpacity(0.6)],
+                  colors: [themeColor, themeColor.withValues(alpha: 0.6)],
                 ),
               ),
               child: Icon(

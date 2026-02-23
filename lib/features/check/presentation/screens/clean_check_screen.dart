@@ -23,8 +23,7 @@ class _CleanCheckScreenState extends State<CleanCheckScreen>
   final TextEditingController _urlController = TextEditingController();
   final FocusNode _urlFocusNode = FocusNode();
 
-  LinkAssessmentEntity? _lastAssessment;
-  String? _errorMessage;
+
 
   @override
   void initState() {

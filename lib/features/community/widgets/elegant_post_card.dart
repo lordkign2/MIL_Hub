@@ -280,7 +280,7 @@ class _ElegantPostCardState extends State<ElegantPostCard>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -356,8 +356,8 @@ class _ElegantPostCardState extends State<ElegantPostCard>
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: GlobalVariables.secondaryColor.withOpacity(
-                            0.2,
+                          color: GlobalVariables.secondaryColor.withValues(
+                            alpha: 0.2,
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -456,7 +456,7 @@ class _ElegantPostCardState extends State<ElegantPostCard>
                   vertical: isSmallScreen ? 3 : 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.2),
+                  color: Colors.blue.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(

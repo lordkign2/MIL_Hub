@@ -107,7 +107,7 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [widget.themeColor, Colors.black.withOpacity(0.8)],
+            colors: [widget.themeColor, Colors.black.withValues(alpha: 0.8)],
           ),
         ),
         child: Padding(
@@ -165,8 +165,8 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            widget.themeColor.withOpacity(0.3),
-                            widget.themeColor.withOpacity(0.1),
+                            widget.themeColor.withValues(alpha: 0.3),
+                            widget.themeColor.withValues(alpha: 0.1),
                             Colors.transparent,
                           ],
                         ),
@@ -293,7 +293,7 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
         const SizedBox(height: 8),
         LinearProgressIndicator(
           value: progress,
-          backgroundColor: Colors.white.withOpacity(0.2),
+          backgroundColor: Colors.white.withValues(alpha: 0.2),
           valueColor: AlwaysStoppedAnimation<Color>(widget.themeColor),
           minHeight: 8,
         ),
@@ -310,9 +310,9 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -349,9 +349,9 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,8 +431,8 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
             color: isActive
                 ? widget.themeColor
                 : isToday
-                ? Colors.white.withOpacity(0.3)
-                : Colors.white.withOpacity(0.1),
+                ? Colors.white.withValues(alpha: 0.3)
+                : Colors.white.withValues(alpha: 0.1),
           ),
           child: Center(
             child: Text(
@@ -462,9 +462,9 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,13 +508,13 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isAchieved
-            ? widget.themeColor.withOpacity(0.2)
-            : Colors.black.withOpacity(0.3),
+            ? widget.themeColor.withValues(alpha: 0.2)
+            : Colors.black.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isAchieved
-              ? widget.themeColor.withOpacity(0.5)
-              : Colors.white.withOpacity(0.1),
+              ? widget.themeColor.withValues(alpha: 0.5)
+              : Colors.white.withValues(alpha: 0.1),
         ),
       ),
       child: Row(
@@ -527,8 +527,8 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
               color: isAchieved
                   ? widget.themeColor
                   : canAchieve
-                  ? widget.themeColor.withOpacity(0.5)
-                  : Colors.grey.withOpacity(0.3),
+                  ? widget.themeColor.withValues(alpha: 0.5)
+                  : Colors.grey.withValues(alpha: 0.3),
             ),
             child: Icon(
               isAchieved ? Icons.check_rounded : Icons.flag_rounded,
@@ -594,9 +594,9 @@ class _EnhancedStreakScreenState extends State<EnhancedStreakScreen>
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

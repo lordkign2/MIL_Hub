@@ -3,7 +3,7 @@
 
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_profile_model.dart';
 import '../services/user_service.dart';
 
@@ -75,14 +75,14 @@ class OfflineUserService {
   static const String _analyticsCacheKey = '${_prefsKeyPrefix}analytics_cache';
   static const String _activitiesCacheKey =
       '${_prefsKeyPrefix}activities_cache';
-  static const String _syncQueueKey = '${_prefsKeyPrefix}sync_queue';
+  // static const String _syncQueueKey = '${_prefsKeyPrefix}sync_queue';
 
   static bool _isOnline = true;
   static DateTime? _lastSyncTime;
 
   static Future<void> initialize() async {
     // Initialize shared preferences for offline storage
-    print('Offline User Service initialized');
+    // print('Offline User Service initialized');
   }
 
   // Connectivity management
@@ -111,7 +111,7 @@ class OfflineUserService {
 
       await prefs.setString(_profileCacheKey, jsonEncode(cacheData));
     } catch (e) {
-      print('Error caching user profile: $e');
+      // print('Error caching user profile: $e');
     }
   }
 
@@ -136,9 +136,13 @@ class OfflineUserService {
       }
 
       final profileMap = jsonDecode(cache.profileData);
-      return UserProfile.fromFirestore(FakeDocumentSnapshot(profileMap));
+      // Ensure UID is included in the map if it wasn't part of toFirestore
+      if (profileMap['uid'] == null) {
+        profileMap['uid'] = cache.userId;
+      }
+      return UserProfile.fromMap(profileMap);
     } catch (e) {
-      print('Error retrieving cached user profile: $e');
+      // print('Error retrieving cached user profile: $e');
       return null;
     }
   }
@@ -175,7 +179,7 @@ class OfflineUserService {
 
       await prefs.setString(_analyticsCacheKey, jsonEncode(cacheData));
     } catch (e) {
-      print('Error caching user analytics: $e');
+      // print('Error caching user analytics: $e');
     }
   }
 
@@ -213,7 +217,7 @@ class OfflineUserService {
         lastActiveAgo: analyticsMap['lastActiveAgo'],
       );
     } catch (e) {
-      print('Error retrieving cached user analytics: $e');
+      // print('Error retrieving cached user analytics: $e');
       return null;
     }
   }
@@ -257,7 +261,7 @@ class OfflineUserService {
       final pageKey = '${_activitiesCacheKey}_page_$page';
       await prefs.setString(pageKey, jsonEncode(cacheData));
     } catch (e) {
-      print('Error caching user activities: $e');
+      // print('Error caching user activities: $e');
     }
   }
 
@@ -303,7 +307,7 @@ class OfflineUserService {
 
       return activities;
     } catch (e) {
-      print('Error retrieving cached user activities: $e');
+      // print('Error retrieving cached user activities: $e');
       return null;
     }
   }
@@ -335,7 +339,7 @@ class OfflineUserService {
   // Enhanced cache management with batch operations
   static Future<Map<String, dynamic>> getAllCachedData(String userId) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      // final prefs = await SharedPreferences.getInstance();
 
       // Retrieve all cached data for a user
       final profile = await getCachedUserProfile(userId);
@@ -361,7 +365,7 @@ class OfflineUserService {
         'activities': flattenedActivities,
       };
     } catch (e) {
-      print('Error retrieving all cached data: $e');
+      // print('Error retrieving all cached data: $e');
       return {};
     }
   }
@@ -376,7 +380,7 @@ class OfflineUserService {
         await operation();
       }
     } catch (e) {
-      print('Error in batch cache operations: $e');
+      // print('Error in batch cache operations: $e');
     }
   }
 
@@ -385,19 +389,19 @@ class OfflineUserService {
     try {
       // In a real implementation, this would prefetch data based on user behavior patterns
       // For now, we'll just ensure the basic data is cached
-      print('Prefetching user data for user: $userId');
+      // print('Prefetching user data for user: $userId');
 
       // This would typically run in the background to prepare data for future use
       // Implementation would depend on user behavior analytics and usage patterns
     } catch (e) {
-      print('Error prefetching user data: $e');
+      // print('Error prefetching user data: $e');
     }
   }
 
   // Cache warming - preload frequently accessed data
   static Future<void> warmUpCache(String userId) async {
     try {
-      print('Warming up cache for user: $userId');
+      // print('Warming up cache for user: $userId');
 
       // Check if we have valid cached data
       final profileValid = await isCacheValid(
@@ -412,12 +416,12 @@ class OfflineUserService {
 
       // If cache is not valid, fetch fresh data in background
       if (!profileValid || !analyticsValid) {
-        print('Cache warming: Fetching fresh data for user $userId');
+        // print('Cache warming: Fetching fresh data for user $userId');
         // This would trigger background data fetching to populate cache
         // Implementation would depend on specific use cases
       }
     } catch (e) {
-      print('Error warming up cache: $e');
+      // print('Error warming up cache: $e');
     }
   }
 
@@ -455,7 +459,7 @@ class OfflineUserService {
         totalItems: profileCount + analyticsCount + activityPageCount,
       );
     } catch (e) {
-      print('Error getting cache stats: $e');
+      // print('Error getting cache stats: $e');
       return CacheStats(
         profileCount: 0,
         analyticsCount: 0,
@@ -480,7 +484,7 @@ class OfflineUserService {
 
       return DateTime.now().difference(cachedAt).compareTo(maxAge) < 0;
     } catch (e) {
-      print('Error checking cache validity: $e');
+      // print('Error checking cache validity: $e');
       return false;
     }
   }
@@ -558,21 +562,4 @@ class CacheStats {
       totalItems > 0 ? totalItems / 100.0 : 0.0; // Simplified calculation
 }
 
-// Fake DocumentSnapshot for offline data
-class FakeDocumentSnapshot implements DocumentSnapshot {
-  final Map<String, dynamic> _data;
-
-  FakeDocumentSnapshot(this._data);
-
-  @override
-  Map<String, dynamic>? data() => _data;
-
-  @override
-  String get id => _data['uid'] ?? '';
-
-  @override
-  bool get exists => true;
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
+// Fake DocumentSnapshot removed as we now use UserProfile.fromMap

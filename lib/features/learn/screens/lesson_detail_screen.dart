@@ -209,8 +209,8 @@ class _ImmersiveLessonDetailScreenState
                               end: Alignment.bottomRight,
                               colors: [
                                 widget.color,
-                                widget.color.withOpacity(0.7),
-                                Colors.black.withOpacity(0.8),
+                                widget.color.withValues(alpha: 0.7),
+                                Colors.black.withValues(alpha: 0.8),
                               ],
                             ),
                           ),
@@ -315,10 +315,10 @@ class _ImmersiveLessonDetailScreenState
                           margin: const EdgeInsets.all(20),
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: Colors.grey[900]!.withOpacity(0.8),
+                            color: Colors.grey[900]!.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                             ),
                           ),
                           child: Column(
@@ -364,9 +364,9 @@ class _ImmersiveLessonDetailScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.black.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -428,10 +428,10 @@ class _ImmersiveLessonDetailScreenState
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [widget.color.withOpacity(0.1), Colors.transparent],
+          colors: [widget.color.withValues(alpha: 0.1), Colors.transparent],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: widget.color.withOpacity(0.3)),
+        border: Border.all(color: widget.color.withValues(alpha: 0.3)),
       ),
       child: Text(
         text,
@@ -533,7 +533,7 @@ class _ImmersiveLessonDetailScreenState
                 label: Text(_isBookmarked ? 'Bookmarked' : 'Bookmark'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white70,
-                  side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -552,7 +552,7 @@ class _ImmersiveLessonDetailScreenState
                 label: const Text('Share'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white70,
-                  side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/widgets/loading_indicator.dart';
 import '../../../../../core/widgets/error_display.dart';
@@ -18,17 +20,55 @@ class CleanCommunityScreen extends StatefulWidget {
 
 class _CleanCommunityScreenState extends State<CleanCommunityScreen> {
   late final CommunityBloc _communityBloc;
+  final ScrollController _scrollController = ScrollController();
+  Completer<void>? _refreshCompleter;
 
   @override
   void initState() {
     super.initState();
     _communityBloc = sl.get<CommunityBloc>();
+    _setupScrollListener();
     // Load posts when screen initializes
     _communityBloc.add(const LoadPostsEvent());
   }
 
+  void _setupScrollListener() {
+    _scrollController.addListener(() {
+      if (!_scrollController.hasClients) return;
+
+      final position = _scrollController.position;
+      if (!position.hasPixels) return;
+
+      final state = _communityBloc.state;
+      if (state is! PostsLoaded) return;
+      if (state.posts.isEmpty) return;
+      if (!state.hasMorePosts) return;
+      if (state.isLoadingMore) return;
+
+      // Load older posts only when user is scrolling down (towards bottom)
+      // and is near the end of the list.
+      if (position.userScrollDirection == ScrollDirection.reverse &&
+          position.extentAfter < 600) {
+        _communityBloc.add(
+          LoadPostsEvent(lastPostId: state.posts.last.id),
+        );
+      }
+    });
+  }
+
+  Future<void> _refreshPosts() {
+    if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+      return _refreshCompleter!.future;
+    }
+
+    _refreshCompleter = Completer<void>();
+    _communityBloc.add(const RefreshPostsEvent());
+    return _refreshCompleter!.future;
+  }
+
   @override
   void dispose() {
+    _scrollController.dispose();
     _communityBloc.dispose();
     super.dispose();
   }
@@ -42,7 +82,7 @@ class _CleanCommunityScreenState extends State<CleanCommunityScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              _communityBloc.add(const RefreshPostsEvent());
+              _refreshPosts();
             },
           ),
           IconButton(
@@ -57,6 +97,13 @@ class _CleanCommunityScreenState extends State<CleanCommunityScreen> {
         stream: _communityBloc.stream,
         builder: (context, snapshot) {
           final state = snapshot.data ?? _communityBloc.state;
+
+          if (_refreshCompleter != null &&
+              !_refreshCompleter!.isCompleted &&
+              (state is PostsLoaded && !state.isRefreshing ||
+                  state is CommunityError)) {
+            _refreshCompleter!.complete();
+          }
 
           return switch (state) {
             CommunityInitial() || CommunityLoading() => const Center(
@@ -95,13 +142,20 @@ class _CleanCommunityScreenState extends State<CleanCommunityScreen> {
     }
 
     return RefreshIndicator(
-      onRefresh: () async {
-        _communityBloc.add(const RefreshPostsEvent());
-      },
+      onRefresh: _refreshPosts,
       child: ListView.builder(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
-        itemCount: state.posts.length,
+        itemCount: state.posts.length + (state.isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
+          if (index >= state.posts.length) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: AppConstants.smallPadding),
+              child: Center(child: LoadingIndicator(message: 'Loading more...')),
+            );
+          }
+
           final post = state.posts[index];
           return _buildPostCard(post);
         },
@@ -131,7 +185,10 @@ class _CleanCommunityScreenState extends State<CleanCommunityScreen> {
                   radius: 20,
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   child: Text(
-                    post.authorName.substring(0, 1).toUpperCase(),
+                    (post.authorName.trim().isNotEmpty
+                            ? post.authorName.trim().substring(0, 1)
+                            : '?')
+                        .toUpperCase(),
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),

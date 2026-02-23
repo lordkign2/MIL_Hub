@@ -9,6 +9,8 @@ A comprehensive media literacy education and fact-checking platform designed spe
 
 ## 🌟 Features
 
+> **For comprehensive feature documentation with implementation details, see [FEATURES.md](FEATURES.md)**
+
 ### 🔐 Authentication System
 - **Email Authentication**: Secure email/password login and registration
 - **Google Sign-In**: Quick authentication with Google accounts
@@ -269,6 +271,27 @@ flutter build apk --release
 # iOS
 flutter build ios --release
 ```
+
+## 📊 Code Quality
+
+### Recent Improvements
+- **Lint Reduction**: Reduced Flutter analyze issues from ~300 to 115 (61% improvement)
+- **Build Errors**: All critical build errors resolved
+- **Code Cleanup**: Removed unused code, dead methods, and deprecated patterns
+- **Safety Improvements**: Added context safety checks and proper state management
+
+### Current Status
+```bash
+flutter analyze
+# 115 issues found (primarily deprecated_member_use in learn widgets)
+```
+
+### Standards
+- **Linting**: Uses `flutter_lints` package for code quality
+- **Clean Architecture**: Strict adherence to separation of concerns
+- **Type Safety**: Strong typing throughout the codebase
+- **Error Handling**: Structured exception and failure patterns
+
 
 ## 🛡️ Security Features
 

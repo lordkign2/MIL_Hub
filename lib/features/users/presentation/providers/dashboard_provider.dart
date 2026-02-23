@@ -210,9 +210,9 @@ class DashboardProvider extends ChangeNotifier {
       // Implement retry mechanism with exponential backoff
       if (retryCount < 3) {
         final delay = Duration(milliseconds: 1000 * (retryCount + 1));
-        print(
-          'Retrying loadMoreActivities in ${delay.inMilliseconds}ms (attempt ${retryCount + 1})',
-        );
+        // print(
+        //   'Retrying loadMoreActivities in ${delay.inMilliseconds}ms (attempt ${retryCount + 1})',
+        // );
         await Future.delayed(delay);
         return await loadMoreActivities(retryCount: retryCount + 1);
       }

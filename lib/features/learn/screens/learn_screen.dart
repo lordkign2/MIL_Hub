@@ -178,8 +178,8 @@ class _LearnScreenState extends State<LearnScreen>
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            Colors.purple.withOpacity(0.3),
-                            Colors.black.withOpacity(0.8),
+                            Colors.purple.withValues(alpha: 0.3),
+                            Colors.black.withValues(alpha: 0.8),
                           ],
                         ),
                       ),
@@ -214,10 +214,10 @@ class _LearnScreenState extends State<LearnScreen>
                               // Search bar
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
+                                  color: Colors.white.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(25),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                   ),
                                 ),
                                 child: TextField(
@@ -228,7 +228,7 @@ class _LearnScreenState extends State<LearnScreen>
                                   decoration: InputDecoration(
                                     hintText: 'Search lessons...',
                                     hintStyle: TextStyle(
-                                      color: Colors.white.withOpacity(0.6),
+                                      color: Colors.white.withValues(alpha: 0.6),
                                     ),
                                     border: InputBorder.none,
                                     contentPadding: const EdgeInsets.symmetric(
@@ -237,12 +237,12 @@ class _LearnScreenState extends State<LearnScreen>
                                     ),
                                     prefixIcon: Icon(
                                       Icons.search_rounded,
-                                      color: Colors.white.withOpacity(0.6),
+                                      color: Colors.white.withValues(alpha: 0.6),
                                     ),
                                     suffixIcon: IconButton(
                                       icon: Icon(
                                         Icons.clear_rounded,
-                                        color: Colors.white.withOpacity(0.6),
+                                        color: Colors.white.withValues(alpha: 0.6),
                                       ),
                                       onPressed: _clearSearch,
                                     ),
@@ -312,11 +312,11 @@ class _LearnScreenState extends State<LearnScreen>
                                     borderRadius: BorderRadius.circular(20),
                                     color: isSelected
                                         ? Colors.purple
-                                        : Colors.white.withOpacity(0.1),
+                                        : Colors.white.withValues(alpha: 0.1),
                                     border: Border.all(
                                       color: isSelected
                                           ? Colors.purple
-                                          : Colors.white.withOpacity(0.2),
+                                          : Colors.white.withValues(alpha: 0.2),
                                     ),
                                   ),
                                   child: Text(
@@ -324,7 +324,7 @@ class _LearnScreenState extends State<LearnScreen>
                                     style: TextStyle(
                                       color: isSelected
                                           ? Colors.white
-                                          : Colors.white.withOpacity(0.8),
+                                          : Colors.white.withValues(alpha: 0.8),
                                       fontWeight: isSelected
                                           ? FontWeight.bold
                                           : FontWeight.normal,
@@ -360,7 +360,7 @@ class _LearnScreenState extends State<LearnScreen>
                           Icon(
                             Icons.search_off_rounded,
                             size: 64,
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -368,7 +368,7 @@ class _LearnScreenState extends State<LearnScreen>
                                 ? 'No lessons found for "$_searchQuery"'
                                 : 'No lessons found in $_selectedCategory',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.6),
+                              color: Colors.white.withValues(alpha: 0.6),
                               fontSize: 16,
                             ),
                             textAlign: TextAlign.center,
@@ -377,7 +377,7 @@ class _LearnScreenState extends State<LearnScreen>
                           Text(
                             'Try adjusting your search or filter',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.4),
+                              color: Colors.white.withValues(alpha: 0.4),
                               fontSize: 14,
                             ),
                           ),

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../models/user_profile_model.dart';
+import '../../services/user_service.dart';
 
 /// Base class for all dashboard events
 abstract class DashboardEvent extends Equatable {

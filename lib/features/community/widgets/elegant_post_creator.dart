@@ -150,7 +150,7 @@ class _ElegantPostCreatorState extends State<ElegantPostCreator>
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Dialog.fullscreen(
-            backgroundColor: Colors.black.withOpacity(0.95),
+            backgroundColor: Colors.black.withValues(alpha: 0.95),
             child: Scaffold(
               backgroundColor: Colors.transparent,
               appBar: _buildAppBar(),
@@ -303,7 +303,7 @@ class _ElegantPostCreatorState extends State<ElegantPostCreator>
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: GlobalVariables.secondaryColor.withOpacity(0.2),
+                  color: GlobalVariables.secondaryColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -513,9 +513,9 @@ class _ElegantPostCreatorState extends State<ElegantPostCreator>
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.2),
+                      color: Colors.blue.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.blue.withOpacity(0.5)),
+                      border: Border.all(color: Colors.blue.withValues(alpha: 0.5)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,

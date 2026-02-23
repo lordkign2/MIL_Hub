@@ -23,8 +23,8 @@ class SimpleUserDashboard extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     themeColor,
-                    themeColor.withOpacity(0.7),
-                    Colors.black.withOpacity(0.8),
+                    themeColor.withValues(alpha: 0.7),
+                    Colors.black.withValues(alpha: 0.8),
                   ],
                 ),
               ),
@@ -154,9 +154,9 @@ class SimpleUserDashboard extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey[900]!.withOpacity(0.5),
+                color: Colors.grey[900]!.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: themeColor.withOpacity(0.3)),
+                border: Border.all(color: themeColor.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,10 +306,10 @@ class SimpleUserDashboard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [color.withOpacity(0.2), Colors.black.withOpacity(0.8)],
+          colors: [color.withValues(alpha: 0.2), Colors.black.withValues(alpha: 0.8)],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -347,10 +347,10 @@ class SimpleUserDashboard extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [color.withOpacity(0.2), Colors.black.withOpacity(0.8)],
+            colors: [color.withValues(alpha: 0.2), Colors.black.withValues(alpha: 0.8)],
           ),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [

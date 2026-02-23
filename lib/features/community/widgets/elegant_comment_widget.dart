@@ -334,8 +334,8 @@ class _ElegantCommentWidgetState extends State<ElegantCommentWidget>
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: GlobalVariables.secondaryColor.withOpacity(
-                            0.2,
+                          color: GlobalVariables.secondaryColor.withValues(
+                            alpha: 0.2,
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -528,7 +528,7 @@ class _ElegantCommentWidgetState extends State<ElegantCommentWidget>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -544,7 +544,7 @@ class _ElegantCommentWidgetState extends State<ElegantCommentWidget>
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: _userReaction == reaction
-                    ? Colors.blue.withOpacity(0.3)
+                    ? Colors.blue.withValues(alpha: 0.3)
                     : Colors.transparent,
                 shape: BoxShape.circle,
               ),

@@ -99,8 +99,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
                     end: Alignment.bottomRight,
                     colors: [
                       widget.themeColor,
-                      widget.themeColor.withOpacity(0.7),
-                      Colors.black.withOpacity(0.8),
+                      widget.themeColor.withValues(alpha: 0.7),
+                      Colors.black.withValues(alpha: 0.8),
                     ],
                   ),
                 ),
@@ -465,9 +465,9 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+        border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -515,7 +515,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           border: Border(
-            top: BorderSide(color: Colors.white.withOpacity(0.1), width: 0.5),
+            top: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
           ),
         ),
         child: Row(
@@ -552,7 +552,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
             else if (onTap != null)
               Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: Colors.white.withOpacity(0.4),
+                color: Colors.white.withValues(alpha: 0.4),
                 size: 16,
               ),
           ],
@@ -637,151 +637,151 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
   // Settings actions (placeholder implementations)
   void _toggleTheme() {
     // TODO: Implement theme toggle
-    print('Toggle theme');
+    // print('Toggle theme');
   }
 
   void _changeLanguage() {
     // TODO: Show language selection dialog
-    print('Change language');
+    // print('Change language');
   }
 
   void _toggleAutoSync() {
     // TODO: Toggle auto-sync
-    print('Toggle auto-sync');
+    // print('Toggle auto-sync');
   }
 
   void _togglePushNotifications() {
     // TODO: Toggle push notifications
-    print('Toggle push notifications');
+    // print('Toggle push notifications');
   }
 
   void _toggleEmailDigest() {
     // TODO: Toggle email digest
-    print('Toggle email digest');
+    // print('Toggle email digest');
   }
 
   void _toggleAchievementAlerts() {
     // TODO: Toggle achievement alerts
-    print('Toggle achievement alerts');
+    // print('Toggle achievement alerts');
   }
 
   void _toggleStreakReminders() {
     // TODO: Toggle streak reminders
-    print('Toggle streak reminders');
+    // print('Toggle streak reminders');
   }
 
   void _setQuietHours() {
     // TODO: Show quiet hours picker
-    print('Set quiet hours');
+    // print('Set quiet hours');
   }
 
   void _setDailyGoal() {
     // TODO: Show daily goal picker
-    print('Set daily goal');
+    // print('Set daily goal');
   }
 
   void _setPreferredDifficulty() {
     // TODO: Show difficulty selection
-    print('Set preferred difficulty');
+    // print('Set preferred difficulty');
   }
 
   void _setLearningStyle() {
     // TODO: Show learning style selection
-    print('Set learning style');
+    // print('Set learning style');
   }
 
   void _toggleAdaptiveLearning() {
     // TODO: Toggle adaptive learning
-    print('Toggle adaptive learning');
+    // print('Toggle adaptive learning');
   }
 
   void _toggleGamification() {
     // TODO: Toggle gamification
-    print('Toggle gamification');
+    // print('Toggle gamification');
   }
 
   void _setStudyReminder() {
     // TODO: Show study reminder time picker
-    print('Set study reminder');
+    // print('Set study reminder');
   }
 
   void _toggleProfileVisibility() {
     // TODO: Toggle profile visibility
-    print('Toggle profile visibility');
+    // print('Toggle profile visibility');
   }
 
   void _toggleActivitySharing() {
     // TODO: Toggle activity sharing
-    print('Toggle activity sharing');
+    // print('Toggle activity sharing');
   }
 
   void _toggleAchievementsVisibility() {
     // TODO: Toggle achievements visibility
-    print('Toggle achievements visibility');
+    // print('Toggle achievements visibility');
   }
 
   void _toggleOnlineStatus() {
     // TODO: Toggle online status
-    print('Toggle online status');
+    // print('Toggle online status');
   }
 
   void _showDataUsageInfo() {
     // TODO: Show data usage information
-    print('Show data usage info');
+    // print('Show data usage info');
   }
 
   void _changePassword() {
     // TODO: Navigate to change password screen
-    print('Change password');
+    // print('Change password');
   }
 
   void _adjustTextSize() {
     // TODO: Show text size adjustment
-    print('Adjust text size');
+    // print('Adjust text size');
   }
 
   void _toggleHighContrast() {
     // TODO: Toggle high contrast
-    print('Toggle high contrast');
+    // print('Toggle high contrast');
   }
 
   void _toggleReduceMotion() {
     // TODO: Toggle reduce motion
-    print('Toggle reduce motion');
+    // print('Toggle reduce motion');
   }
 
   void _toggleScreenReader() {
     // TODO: Toggle screen reader
-    print('Toggle screen reader');
+    // print('Toggle screen reader');
   }
 
   void _setColorBlindSupport() {
     // TODO: Show color blind support options
-    print('Set color blind support');
+    // print('Set color blind support');
   }
 
   void _showTermsOfService() {
     // TODO: Show terms of service
-    print('Show terms of service');
+    // print('Show terms of service');
   }
 
   void _showPrivacyPolicy() {
     // TODO: Show privacy policy
-    print('Show privacy policy');
+    // print('Show privacy policy');
   }
 
   void _showHelpSupport() {
     // TODO: Show help and support
-    print('Show help and support');
+    // print('Show help and support');
   }
 
   void _sendFeedback() {
     // TODO: Show feedback form
-    print('Send feedback');
+    // print('Send feedback');
   }
 
   void _rateApp() {
     // TODO: Open app store rating
-    print('Rate app');
+    // print('Rate app');
   }
 }

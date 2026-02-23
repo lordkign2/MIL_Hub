@@ -105,7 +105,7 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [widget.themeColor, Colors.black.withOpacity(0.8)],
+            colors: [widget.themeColor, Colors.black.withValues(alpha: 0.8)],
           ),
         ),
         child: Padding(
@@ -154,13 +154,13 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: HybridLearningService.isOnline
-                      ? Colors.green.withOpacity(0.2)
-                      : Colors.orange.withOpacity(0.2),
+                      ? Colors.green.withValues(alpha: 0.2)
+                      : Colors.orange.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: HybridLearningService.isOnline
-                        ? Colors.green.withOpacity(0.5)
-                        : Colors.orange.withOpacity(0.5),
+                        ? Colors.green.withValues(alpha: 0.5)
+                        : Colors.orange.withValues(alpha: 0.5),
                   ),
                 ),
                 child: Row(
@@ -309,9 +309,9 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.5),
+        color: Colors.grey[900]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -350,9 +350,9 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,7 +416,7 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
                         child: Text(
                           'Connect to internet to sync your progress',
                           style: TextStyle(
-                            color: Colors.orange.withOpacity(0.7),
+                            color: Colors.orange.withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
                           textAlign: TextAlign.center,
@@ -572,12 +572,12 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            widget.themeColor.withOpacity(0.1),
-            Colors.black.withOpacity(0.8),
+            widget.themeColor.withValues(alpha: 0.1),
+            Colors.black.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+        border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
       ),
       child: Stack(
         children: [
@@ -675,9 +675,9 @@ class _OfflineModeScreenState extends State<OfflineModeScreen>
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]!.withOpacity(0.5),
+                  color: Colors.grey[900]!.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: widget.themeColor.withOpacity(0.3)),
+                  border: Border.all(color: widget.themeColor.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

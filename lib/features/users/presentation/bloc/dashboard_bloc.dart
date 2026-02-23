@@ -189,10 +189,6 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       );
 
       try {
-        final lastActivity = currentState.activities.isNotEmpty
-            ? currentState.activities.last
-            : null;
-
         // In a real implementation, you would track the last document for pagination
         // final DocumentSnapshot? lastDocument = null;
 

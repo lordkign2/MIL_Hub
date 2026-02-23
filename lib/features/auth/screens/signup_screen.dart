@@ -71,11 +71,10 @@ class _SignupScreenState extends State<SignupScreen> {
                         _emailController.text.trim(),
                         _passwordController.text.trim(),
                       );
+                      if (!mounted) return;
                       setState(() => _isSigningUp = false);
                       if (result.user != null) {
-                        if (mounted) {
-                          Navigator.pushReplacementNamed(context, "/home");
-                        }
+                        Navigator.pushReplacementNamed(context, "/home");
                       } else {
                         setState(() {
                           _errorMessage = result.error ?? "Signup failed";
@@ -120,17 +119,14 @@ class _SignupScreenState extends State<SignupScreen> {
               if (_isSigningUp) return;
               setState(() => _isSigningUp = true);
               final user = await AuthService().signInWithGoogle();
+              if (!mounted) return;
               setState(() => _isSigningUp = false);
               if (user != null) {
-                if (mounted) {
-                  Navigator.pushReplacementNamed(context, "/home");
-                }
+                Navigator.pushReplacementNamed(context, "/home");
               } else {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Google Sign-In failed")),
-                  );
-                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Google Sign-In failed")),
+                );
               }
             }, isSigningUp: _isSigningUp),
 

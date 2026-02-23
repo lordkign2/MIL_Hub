@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'core/di/injection_container.dart';
+import 'core/di/service_locator.dart';
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_constants.dart';
+import 'core/services/logging/logging_facade.dart';
 import 'features/auth/presentation/widgets/auth_wrapper.dart';
 import 'features/auth/presentation/screens/new_login_screen.dart';
 import 'features/auth/presentation/screens/new_signup_screen.dart';
@@ -16,12 +20,52 @@ import 'services/share_intent_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // Initialize dependency injection
-  await initializeDependencies();
-  await initializeFeatureDependencies();
+  try {
+    // Initialize Firebase
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    
+    // Initialize dependency injection
+    await initializeDependencies();
+    await initializeFeatureDependencies();
+    
+    // Get logging service and error handler
+    // Get logging service and error handler
+    final loggingService = sl.get<LoggingService>();
+    final errorHandler = sl.get<ErrorHandler>();
+    
+    // Set up global error handlers
+    errorHandler.setupGlobalErrorHandlers();
+    
+    // Configure Crashlytics based on build mode
+    if (kDebugMode) {
+      // Disable Crashlytics collection while in debug mode
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+      loggingService.info('Crashlytics disabled in debug mode');
+    } else {
+      // Enable Crashlytics in release mode
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+      loggingService.info('Crashlytics enabled in release mode');
+      
+      // Add app version and build info to Crashlytics context
+      loggingService.addGlobalContext({
+        'app_version': AppConstants.appVersion ?? '1.0.0',
+        'build_mode': 'release',
+        'platform': defaultTargetPlatform.toString(),
+      });
+    }
+    
+    loggingService.info('MIL Hub app initialized successfully');
+    
+  } catch (error, stackTrace) {
+    // Fallback logging if dependency injection fails
+    debugPrint('Failed to initialize app: $error');
+    if (!kDebugMode) {
+      // Try to record to Crashlytics directly
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true);
+    }
+    rethrow;
+  }
 
   runApp(const MILHubApp());
 }
