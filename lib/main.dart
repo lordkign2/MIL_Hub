@@ -29,7 +29,6 @@ void main() async {
     await initializeFeatureDependencies();
     
     // Get logging service and error handler
-    // Get logging service and error handler
     final loggingService = sl.get<LoggingService>();
     final errorHandler = sl.get<ErrorHandler>();
     

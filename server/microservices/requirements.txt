@@ -1,0 +1,57 @@
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Async Task Management
+celery==5.3.4
+redis==5.0.1
+
+# Database
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# Machine Learning
+torch==2.1.1
+torchvision==0.16.1
+torchaudio==2.1.1
+transformers==4.35.2
+sentence-transformers==2.2.2
+
+# Computer Vision
+opencv-python==4.8.1.78
+Pillow==10.1.0
+imagehash==4.3.1
+scikit-image==0.22.0
+
+# Natural Language Processing
+spacy==3.7.2
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0.tar.gz
+
+# Media Processing
+ffmpeg-python==0.2.0
+mediapipe==0.10.7
+
+# HTTP and Utilities
+httpx==0.25.2
+requests==2.31.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Security and Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-magic==0.4.27
+
+# Monitoring and Logging
+python-json-logger==2.0.7
+sentry-sdk==1.39.1
+
+# Vector Database Extensions
+pgvector==0.2.4
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
