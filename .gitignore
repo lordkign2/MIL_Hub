@@ -10,6 +10,7 @@ generated_plugin_registrant.dart
 # IDEs and tools
 .idea/
 .vscode/
+
 *.iml
 
 # Generated plugin registrant
@@ -77,9 +78,6 @@ server/node_modules/
 # IntelliJ/Android Studio
 *.iws
 out/
-
-# VS Code
-.vscode/
 
 # Flutter build artifacts
 **/build/
