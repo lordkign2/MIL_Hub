@@ -1,0 +1,12 @@
+{
+  "modelName": "semantic_similarity",
+  "modelVersion": "1.0",
+  "handler": "semantic_similarity_handler.py",
+  "modelFile": null,
+  "serializedFile": null,
+  "extraFiles": [],
+  "requirements": {
+    "files": ["requirements.txt"],
+    "pythonRequirements": "requirements.txt"
+  }
+}

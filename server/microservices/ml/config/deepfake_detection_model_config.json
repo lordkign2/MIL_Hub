@@ -1,0 +1,12 @@
+{
+  "modelName": "deepfake_detection",
+  "modelVersion": "1.0",
+  "handler": "deepfake_detection_handler.py",
+  "modelFile": "deepfake_model.pth",
+  "serializedFile": "deepfake_model.pt",
+  "extraFiles": [],
+  "requirements": {
+    "files": ["requirements.txt"],
+    "pythonRequirements": "requirements.txt"
+  }
+}

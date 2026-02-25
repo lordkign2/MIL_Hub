@@ -1,0 +1,12 @@
+{
+  "modelName": "ai_detection",
+  "modelVersion": "1.0",
+  "handler": "ai_detection_handler.py",
+  "modelFile": "ai_detection_model.pth",
+  "serializedFile": "ai_detection_model.pt",
+  "extraFiles": [],
+  "requirements": {
+    "files": ["requirements.txt"],
+    "pythonRequirements": "requirements.txt"
+  }
+}
