@@ -22,6 +22,9 @@ Future<void> initCheckDependencies() async {
   checkSl.registerLazySingleton<LinkCheckRepository>(
     () => LinkCheckRepositoryImpl(remoteDataSource: checkSl()),
   );
+  checkSl.registerLazySingleton<ImageAuthenticityRepository>(
+    () => ImageAuthenticityRepositoryImpl(),
+  );
 
   // Use cases
   checkSl.registerLazySingleton(() => AnalyzeLinkUseCase(checkSl()));
@@ -39,6 +42,7 @@ Future<void> initCheckDependencies() async {
       getRecentLinkChecksUseCase: checkSl(),
       getUserLinkChecksUseCase: checkSl(),
       findPreviousCheckUseCase: checkSl(),
+      checkImageAuthenticityUseCase: checkSl(),
     ),
   );
 }

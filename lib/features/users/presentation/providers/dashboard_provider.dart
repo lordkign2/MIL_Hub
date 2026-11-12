@@ -40,27 +40,38 @@ class DashboardProvider extends ChangeNotifier {
       final currentUser = UserService.auth.currentUser;
       if (currentUser != null) {
         OfflineUserService.warmUpCache(currentUser.uid);
+        
+        // Ensure profile exists in DB before listening to stream
+        final profileDoc = await UserService.usersCollection.doc(currentUser.uid).get();
+        if (!profileDoc.exists) {
+          await UserService.initializeNewUserProfile();
+          // Give it a beat to populate stream
+          await Future.delayed(const Duration(milliseconds: 1000));
+        }
       }
 
-      // Load user profile
-      final profileStream = UserService.getCurrentUserProfile();
-      final profileCompleter = Completer<UserProfile?>();
+      // Load user profile and analytics concurrently
+      final results = await Future.wait([
+        UserService.getCurrentUserProfile().first,
+        UserService.streamUserAnalytics().first.catchError((e) {
+          // Provide fallback if analytics doc doesn't exist
+          return UserAnalytics(
+            totalActivities: 0,
+            weeklyActivities: 0,
+            monthlyActivities: 0,
+            currentStreak: 0,
+            longestStreak: 0,
+            totalTimeSpent: 0,
+            averageScore: 0.0,
+            level: 1,
+            joinedDays: 0,
+            lastActiveAgo: 0,
+          );
+        }),
+      ]);
 
-      final profileSubscription = profileStream.listen(
-        (profile) {
-          if (!profileCompleter.isCompleted) {
-            profileCompleter.complete(profile);
-          }
-        },
-        onError: (error) {
-          if (!profileCompleter.isCompleted) {
-            profileCompleter.completeError(error);
-          }
-        },
-      );
-
-      final profile = await profileCompleter.future;
-      profileSubscription.cancel();
+      final profile = results[0] as UserProfile?;
+      final analytics = results[1] as UserAnalytics;
 
       if (profile == null) {
         _errorMessage = 'Failed to load user profile';
@@ -70,27 +81,6 @@ class DashboardProvider extends ChangeNotifier {
       }
 
       _userProfile = profile;
-
-      // Load user analytics
-      final analyticsStream = UserService.streamUserAnalytics();
-      final analyticsCompleter = Completer<UserAnalytics>();
-
-      final analyticsSubscription = analyticsStream.listen(
-        (analytics) {
-          if (!analyticsCompleter.isCompleted) {
-            analyticsCompleter.complete(analytics);
-          }
-        },
-        onError: (error) {
-          if (!analyticsCompleter.isCompleted) {
-            analyticsCompleter.completeError(error);
-          }
-        },
-      );
-
-      final analytics = await analyticsCompleter.future;
-      analyticsSubscription.cancel();
-
       _userAnalytics = analytics;
 
       // Load initial activities
@@ -181,10 +171,10 @@ class DashboardProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    try {
-      // In a real implementation, you would track the last document for pagination
-      // final DocumentSnapshot? lastDocument = null;
+    // TODO: In a real implementation, you would track the last document for pagination
+    // final DocumentSnapshot? lastDocument = null;
 
+    try {
       final newActivities = await UserService.getPaginatedUserActivities(
         limit: 10,
         // lastDocument: lastDocument, // Disabled for now

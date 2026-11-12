@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/errors/exceptions.dart';
@@ -41,7 +42,12 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
     FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
   }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-       _googleSignIn = googleSignIn ?? GoogleSignIn();
+       _googleSignIn = googleSignIn ??
+           GoogleSignIn(
+             clientId: kIsWeb
+                 ? '227874595135-eq5da1qbu5n44a19k634ildtja6jo2p3.apps.googleusercontent.com'
+                 : null,
+           );
 
   @override
   Future<UserModel> signUpWithEmail({

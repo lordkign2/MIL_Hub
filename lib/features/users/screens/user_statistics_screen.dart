@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/user_profile_model.dart';
 import '../services/user_service.dart';
+import '../presentation/providers/dashboard_provider.dart';
 import '../widgets/user_stats_widget.dart';
 
 class UserStatisticsScreen extends StatefulWidget {
@@ -18,18 +19,27 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
 
-  UserProfile? _userProfile;
-  UserAnalytics? _analytics;
-  bool _isLoading = true;
-  int _selectedPeriod = 0; // 0: Week, 1: Month, 2: Year
+  late final DashboardProvider _provider;
 
+  int _selectedPeriod = 0; // 0: Week, 1: Month, 2: Year
   final List<String> _periods = ['Week', 'Month', 'Year'];
+
+  UserProfile? get _userProfile => _provider.userProfile;
+  UserAnalytics? get _analytics => _provider.userAnalytics;
+  bool get _isLoading => _provider.isLoading;
 
   @override
   void initState() {
     super.initState();
+    _provider = DashboardProvider();
+    
+    _provider.loadDashboard().then((_) {
+      if (mounted && _provider.userProfile != null) {
+        _controller.forward();
+      }
+    });
+
     _initializeAnimation();
-    _loadUserData();
   }
 
   void _initializeAnimation() {
@@ -44,25 +54,6 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
-  Future<void> _loadUserData() async {
-    try {
-      final analytics = await UserService.getUserAnalytics();
-
-      UserService.getCurrentUserProfile().listen((profile) {
-        if (profile != null) {
-          setState(() {
-            _userProfile = profile;
-            _analytics = analytics;
-            _isLoading = false;
-          });
-          _controller.forward();
-        }
-      });
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
-  }
-
   @override
   void dispose() {
     _controller.dispose();
@@ -71,28 +62,33 @@ class _UserStatisticsScreenState extends State<UserStatisticsScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(
-          child: CircularProgressIndicator(color: widget.themeColor),
-        ),
-      );
-    }
+    return ListenableBuilder(
+      listenable: _provider,
+      builder: (context, child) {
+        if (_isLoading) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            body: Center(
+              child: CircularProgressIndicator(color: widget.themeColor),
+            ),
+          );
+        }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: CustomScrollView(
-        slivers: [
-          _buildAppBar(),
-          _buildOverviewSection(),
-          _buildPeriodSelector(),
-          _buildActivityChart(),
-          _buildCategoryBreakdown(),
-          _buildAchievementsSection(),
-          _buildDetailedStats(),
-        ],
-      ),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: CustomScrollView(
+            slivers: [
+              _buildAppBar(),
+              _buildOverviewSection(),
+              _buildPeriodSelector(),
+              _buildActivityChart(),
+              _buildCategoryBreakdown(),
+              _buildAchievementsSection(),
+              _buildDetailedStats(),
+            ],
+          ),
+        );
+      },
     );
   }
 

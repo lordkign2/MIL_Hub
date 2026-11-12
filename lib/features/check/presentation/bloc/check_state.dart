@@ -8,8 +8,12 @@ class CheckLoading extends CheckState {}
 
 class LinkAnalyzed extends CheckState {
   final LinkAssessmentEntity assessment;
-
   LinkAnalyzed(this.assessment);
+}
+
+class ImageAnalyzed extends CheckState {
+  final ImageAuthenticityEntity assessment;
+  ImageAnalyzed(this.assessment);
 }
 
 class LinkCheckSaved extends CheckState {}

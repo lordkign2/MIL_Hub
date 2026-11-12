@@ -4,8 +4,12 @@ abstract class CheckEvent {}
 
 class AnalyzeLinkEvent extends CheckEvent {
   final String url;
-
   AnalyzeLinkEvent(this.url);
+}
+
+class AnalyzeImageEvent extends CheckEvent {
+  final String imagePath;
+  AnalyzeImageEvent(this.imagePath);
 }
 
 class SaveLinkCheckEvent extends CheckEvent {

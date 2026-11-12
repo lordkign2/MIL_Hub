@@ -4,6 +4,7 @@ import '../../domain/usecases/save_link_check_usecase.dart';
 import '../../domain/usecases/get_recent_link_checks_usecase.dart';
 import '../../domain/usecases/get_user_link_checks_usecase.dart';
 import '../../domain/usecases/find_previous_check_usecase.dart';
+import '../../domain/usecases/check_image_authenticity_usecase.dart';
 import 'check_event.dart';
 import 'check_state.dart';
 
@@ -13,6 +14,7 @@ class CheckBloc extends Bloc<CheckEvent, CheckState> {
   final GetRecentLinkChecksUseCase getRecentLinkChecksUseCase;
   final GetUserLinkChecksUseCase getUserLinkChecksUseCase;
   final FindPreviousCheckUseCase findPreviousCheckUseCase;
+  final CheckImageAuthenticityUseCase checkImageAuthenticityUseCase;
 
   CheckBloc({
     required this.analyzeLinkUseCase,
@@ -20,6 +22,7 @@ class CheckBloc extends Bloc<CheckEvent, CheckState> {
     required this.getRecentLinkChecksUseCase,
     required this.getUserLinkChecksUseCase,
     required this.findPreviousCheckUseCase,
+    required this.checkImageAuthenticityUseCase,
   }) : super(CheckInitial()) {
     on<AnalyzeLinkEvent>((event, emit) async {
       emit(CheckLoading());
@@ -27,6 +30,14 @@ class CheckBloc extends Bloc<CheckEvent, CheckState> {
       result.fold(
         (failure) => emit(CheckError(failure.message)),
         (assessment) => emit(LinkAnalyzed(assessment)),
+      );
+    });
+    on<AnalyzeImageEvent>((event, emit) async {
+      emit(CheckLoading());
+      final result = await checkImageAuthenticityUseCase(event.imagePath);
+      result.fold(
+        (failure) => emit(CheckError(failure.message)),
+        (assessment) => emit(ImageAnalyzed(assessment)),
       );
     });
     on<SaveLinkCheckEvent>((event, emit) async {
@@ -37,23 +48,29 @@ class CheckBloc extends Bloc<CheckEvent, CheckState> {
         (_) => emit(LinkCheckSaved()),
       );
     });
-    on<GetRecentLinkChecksEvent>((event, emit) {
+    on<GetRecentLinkChecksEvent>((event, emit) async {
       emit(CheckLoading());
-      getRecentLinkChecksUseCase(limit: event.limit).listen((result) {
-        result.fold(
-          (failure) => emit(CheckError(failure.message)),
-          (linkChecks) => emit(RecentLinkChecksLoaded(linkChecks)),
-        );
-      });
+      await emit.forEach(
+        getRecentLinkChecksUseCase(limit: event.limit),
+        onData: (result) {
+          return result.fold(
+            (failure) => CheckError(failure.message),
+            (linkChecks) => RecentLinkChecksLoaded(linkChecks),
+          );
+        },
+      );
     });
-    on<GetUserLinkChecksEvent>((event, emit) {
+    on<GetUserLinkChecksEvent>((event, emit) async {
       emit(CheckLoading());
-      getUserLinkChecksUseCase(limit: event.limit).listen((result) {
-        result.fold(
-          (failure) => emit(CheckError(failure.message)),
-          (linkChecks) => emit(UserLinkChecksLoaded(linkChecks)),
-        );
-      });
+      await emit.forEach(
+        getUserLinkChecksUseCase(limit: event.limit),
+        onData: (result) {
+          return result.fold(
+            (failure) => CheckError(failure.message),
+            (linkChecks) => UserLinkChecksLoaded(linkChecks),
+          );
+        },
+      );
     });
     on<FindPreviousCheckEvent>((event, emit) async {
       emit(CheckLoading());

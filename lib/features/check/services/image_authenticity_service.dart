@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
+import 'package:exif/exif.dart';
 
 /// Service for checking image authenticity using reverse image search APIs
 class ImageAuthenticityService {
@@ -32,6 +33,31 @@ class ImageAuthenticityService {
       final imageBytes = await imageFile.readAsBytes();
       final imageHash = _calculateImageHash(imageBytes);
 
+      // EXIF Forensic Extraction
+      final exifTags = await readExifFromBytes(imageBytes);
+      bool isManipulated = false;
+      String software = 'Unknown';
+      String dateOriginal = 'Unknown';
+      String cameraModel = 'Unknown';
+
+      if (exifTags.isNotEmpty) {
+        exifTags.forEach((key, value) {
+          final k = key.toLowerCase();
+          final val = value.toString();
+          if (k.contains('software')) {
+            software = val;
+            final lowerSoftware = val.toLowerCase();
+            if (lowerSoftware.contains('photoshop') || lowerSoftware.contains('lightroom') || lowerSoftware.contains('gimp') || lowerSoftware.contains('editor')) {
+              isManipulated = true;
+            }
+          }
+          if (k.contains('datetimeoriginal') || k.contains('datetime')) {
+            if (dateOriginal == 'Unknown') dateOriginal = val; // Take first found
+          }
+          if (k.contains('model')) cameraModel = val;
+        });
+      }
+
       // Bing Visual Search
       if (useBing && _bingApiKey != 'YOUR_BING_VISUAL_SEARCH_API_KEY') {
         try {
@@ -52,12 +78,18 @@ class ImageAuthenticityService {
         }
       }
 
-      // Analyze results
+      // Analyze results integrating EXIF forensics
       return _analyzeSearchResults(
         imageHash: imageHash,
         searchResults: searchResults,
         errors: errors,
         originalFilePath: imageFile.path,
+        isManipulated: isManipulated,
+        exifData: {
+          'Software': software,
+          'Date Original': dateOriginal,
+          'Camera Model': cameraModel,
+        },
       );
     } catch (e) {
       return ImageAuthenticityResult(
@@ -240,6 +272,8 @@ class ImageAuthenticityService {
     required List<ImageSearchResult> searchResults,
     required List<String> errors,
     required String originalFilePath,
+    required bool isManipulated,
+    required Map<String, String> exifData,
   }) {
     int totalMatches = 0;
     DateTime? earliestMatch;
@@ -302,6 +336,17 @@ class ImageAuthenticityService {
       confidence = 0.8;
     }
 
+    // EXIF Forensic integration overrides
+    if (isManipulated) {
+      isAuthentic = false;
+      verdict = '❌ Digitally Manipulated';
+      summary = 'Forensic EXIF data confirms this image was edited using: ${exifData['Software']}. Proceed with extreme caution. \n\nReverse Search Summary: ' + summary;
+      confidence = 0.95;
+      warnings.add('Image edited with ${exifData['Software']}');
+    } else if (exifData['Camera Model'] != 'Unknown' || exifData['Date Original'] != 'Unknown') {
+      summary += '\n\nForensic details: Taken on ${exifData['Camera Model']} at ${exifData['Date Original']}.';
+    }
+
     // Add time-based analysis
     if (earliestMatch != null) {
       final daysSinceFirst = DateTime.now().difference(earliestMatch).inDays;
@@ -323,6 +368,8 @@ class ImageAuthenticityService {
         'totalMatches': totalMatches,
         'earliestMatch': earliestMatch?.toIso8601String(),
         'suspiciousDomains': suspiciousDomains,
+        'exifData': exifData,
+        'isManipulated': isManipulated,
         'errors': errors,
         'originalFilePath': originalFilePath,
         'timestamp': DateTime.now().toIso8601String(),

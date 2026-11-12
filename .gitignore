@@ -10,7 +10,7 @@ generated_plugin_registrant.dart
 # IDEs and tools
 .idea/
 .vscode/
-
+.qoder/
 *.iml
 
 # Generated plugin registrant

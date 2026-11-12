@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../models/link_check_model.dart';
-import '../services/link_check_service.dart';
+import 'package:image_picker/image_picker.dart';
+import '../domain/entities/link_check_entity.dart';
+import '../presentation/bloc/check_bloc.dart';
+import '../presentation/bloc/check_event.dart';
+import '../presentation/bloc/check_state.dart';
 
-class CheckScreen extends StatefulWidget {
+class CheckScreen extends StatelessWidget {
   const CheckScreen({super.key});
 
   @override
-  State<CheckScreen> createState() => _CheckScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => GetIt.instance<CheckBloc>(),
+      child: const _CheckScreenView(),
+    );
+  }
 }
 
-class _CheckScreenState extends State<CheckScreen>
+class _CheckScreenView extends StatefulWidget {
+  const _CheckScreenView();
+
+  @override
+  State<_CheckScreenView> createState() => _CheckScreenViewState();
+}
+
+class _CheckScreenViewState extends State<_CheckScreenView>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -20,10 +36,9 @@ class _CheckScreenState extends State<CheckScreen>
 
   final TextEditingController _urlController = TextEditingController();
   final FocusNode _urlFocusNode = FocusNode();
+  final ImagePicker _picker = ImagePicker();
 
-  bool _isChecking = false;
-  LinkAssessment? _lastAssessment;
-  String? _errorMessage;
+
 
   @override
   void initState() {
@@ -55,7 +70,7 @@ class _CheckScreenState extends State<CheckScreen>
     // Start entrance animations
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 200), () {
-      _slideController.forward();
+      if (mounted) _slideController.forward();
     });
   }
 
@@ -75,47 +90,11 @@ class _CheckScreenState extends State<CheckScreen>
       return;
     }
 
-    setState(() {
-      _isChecking = true;
-      _errorMessage = null;
-      _lastAssessment = null;
-    });
-
-    try {
-      // Perform the link analysis
-      final assessment = await LinkCheckService.analyzeLink(url);
-
-      // Save to Firestore
-      await LinkCheckService.saveLinkCheck(assessment);
-
-      setState(() {
-        _lastAssessment = assessment;
-        _isChecking = false;
-      });
-
-      // Provide haptic feedback
-      HapticFeedback.mediumImpact();
-    } catch (e) {
-      final context = this.context; // Capture context before async gap
-      setState(() {
-        _errorMessage = e.toString();
-        _isChecking = false;
-      });
-
-      // Show error snackbar
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
+    context.read<CheckBloc>().add(AnalyzeLinkEvent(url));
   }
 
   void _showError(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -125,11 +104,51 @@ class _CheckScreenState extends State<CheckScreen>
     );
   }
 
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null && mounted) {
+        context.read<CheckBloc>().add(AnalyzeImageEvent(pickedFile.path));
+      }
+    } catch (e) {
+      _showError('Error picking image: $e');
+    }
+  }
+
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.grey[900],
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Colors.white),
+              title: const Text('Take a photo', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Colors.white),
+              title: const Text('Choose from gallery', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _clearResults() {
-    setState(() {
-      _lastAssessment = null;
-      _errorMessage = null;
-    });
+    context.read<CheckBloc>().add(ClearCheckStateEvent());
     _urlController.clear();
   }
 
@@ -148,115 +167,121 @@ class _CheckScreenState extends State<CheckScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.indigo.withValues(alpha: 0.8),
-              Colors.black.withValues(alpha: 0.9),
-              Colors.black,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildAppBar(),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: AnimatedBuilder(
-                    animation: _fadeAnimation,
-                    builder: (context, child) {
-                      return Opacity(
-                        opacity: _fadeAnimation.value,
-                        child: SlideTransition(
-                          position: _slideAnimation,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildHeader(),
-                              const SizedBox(height: 30),
-                              _buildUrlInput(),
-                              const SizedBox(height: 20),
-                              _buildCheckButton(),
-                              if (_isChecking) ...[
-                                const SizedBox(height: 30),
-                                _buildLoadingIndicator(),
-                              ],
-                              if (_lastAssessment != null) ...[
-                                const SizedBox(height: 30),
-                                _buildResults(),
-                              ],
-                              if (_errorMessage != null) ...[
-                                const SizedBox(height: 30),
-                                _buildErrorDisplay(),
-                              ],
-                              const SizedBox(height: 30),
-                              _buildInfoSection(),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+    return BlocConsumer<CheckBloc, CheckState>(
+      listener: (context, state) {
+        if (state is CheckError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${state.message}'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else if (state is LinkAnalyzed) {
+          // Save the link check seamlessly in background
+          context.read<CheckBloc>().add(SaveLinkCheckEvent(state.assessment));
+        }
+      },
+      builder: (context, state) {
+        bool isChecking = state is CheckLoading;
+        LinkAssessmentEntity? lastAssessment;
+        ImageAuthenticityEntity? lastImageAssessment;
+
+        if (state is LinkAnalyzed) {
+          lastAssessment = state.assessment;
+        } else if (state is ImageAnalyzed) {
+          lastImageAssessment = state.assessment;
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.indigo.withValues(alpha: 0.8),
+                  Colors.black.withValues(alpha: 0.9),
+                  Colors.black,
+                ],
               ),
-            ],
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  _buildAppBar(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: AnimatedBuilder(
+                        animation: _fadeAnimation,
+                        builder: (context, child) {
+                          return Opacity(
+                            opacity: _fadeAnimation.value,
+                            child: SlideTransition(
+                              position: _slideAnimation,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildHeader(),
+                                  const SizedBox(height: 30),
+                                  _buildUrlInput(isChecking),
+                                  const SizedBox(height: 20),
+                                  _buildCheckButton(isChecking),
+                                  if (isChecking) ...[
+                                    const SizedBox(height: 30),
+                                    _buildLoadingIndicator(),
+                                  ],
+                                  if (lastAssessment != null) ...[
+                                    const SizedBox(height: 30),
+                                    _buildResults(lastAssessment),
+                                  ],
+                                  if (lastImageAssessment != null) ...[
+                                    const SizedBox(height: 30),
+                                    _buildImageResults(lastImageAssessment),
+                                  ],
+                                  const SizedBox(height: 30),
+                                  _buildInfoSection(),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget _buildAppBar() {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(20),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.indigo.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.indigo.withValues(alpha: 0.3)),
-            ),
-            child: const Icon(
-              Icons.security_rounded,
-              color: Colors.indigo,
-              size: 24,
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          const Text(
+            'Link Checker',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-          const SizedBox(width: 16),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Link Checker',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'Verify links for safety',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
-                ),
-              ],
-            ),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _clearResults,
           ),
-          if (_lastAssessment != null)
-            IconButton(
-              onPressed: _clearResults,
-              icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
-              tooltip: 'Clear results',
-            ),
         ],
       ),
     );
@@ -267,248 +292,229 @@ class _CheckScreenState extends State<CheckScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '🔍 Instant Link Check',
+          'Verify Link Safety',
           style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Text(
-          'Paste any URL below to analyze its safety and legitimacy',
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
-            fontSize: 16,
-            height: 1.4,
+          'Check any URL or Image for safety, authenticity, and risks',
+          style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUrlInput(bool isChecking) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: TextField(
+              controller: _urlController,
+              focusNode: _urlFocusNode,
+              enabled: !isChecking,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Enter URL to check (e.g., https://example.com)',
+                hintStyle: TextStyle(color: Colors.grey[600]),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.all(20),
+                prefixIcon: const Icon(Icons.link, color: Colors.grey),
+              ),
+              onSubmitted: (_) => _checkLink(),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Container(
+          height: 60,
+          width: 60,
+          decoration: BoxDecoration(
+            color: Colors.indigo,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.image, color: Colors.white, size: 30),
+            onPressed: isChecking ? null : _showImageSourceDialog,
+            tooltip: 'Upload Image for Analysis',
           ),
         ),
       ],
     );
   }
 
-  Widget _buildUrlInput() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: _urlFocusNode.hasFocus
-              ? Colors.indigo.withValues(alpha: 0.5)
-              : Colors.white.withValues(alpha: 0.2),
-        ),
-      ),
-      child: TextField(
-        controller: _urlController,
-        focusNode: _urlFocusNode,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
-        decoration: InputDecoration(
-          hintText: 'Enter URL (e.g., https://example.com)',
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-          prefixIcon: Icon(
-            Icons.link_rounded,
-            color: Colors.indigo.withValues(alpha: 0.7),
-          ),
-          suffixIcon: _urlController.text.isNotEmpty
-              ? IconButton(
-                  onPressed: () {
-                    _urlController.clear();
-                    setState(() {});
-                  },
-                  icon: Icon(
-                    Icons.clear_rounded,
-                    color: Colors.white.withValues(alpha: 0.5),
-                  ),
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(20),
-        ),
-        onChanged: (value) => setState(() {}),
-        onSubmitted: (value) => _checkLink(),
-      ),
-    );
-  }
-
-  Widget _buildCheckButton() {
+  Widget _buildCheckButton(bool isChecking) {
     return SizedBox(
       width: double.infinity,
+      height: 55,
       child: ElevatedButton(
-        onPressed: _isChecking ? null : _checkLink,
+        onPressed: isChecking ? null : _checkLink,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.indigo,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(15),
           ),
-          elevation: 4,
+          elevation: 0,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_isChecking)
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            else
-              const Icon(Icons.search_rounded, size: 20),
-            const SizedBox(width: 12),
-            Text(
-              _isChecking ? 'Analyzing...' : 'Check Link',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ],
+        child: Text(
+          isChecking ? 'Checking...' : 'Check Link',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildLoadingIndicator() {
-    return Container(
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
+    return Center(
       child: Column(
         children: [
           const CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Analyzing link safety...',
-            style: TextStyle(color: Colors.white70, fontSize: 16),
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 20),
           Text(
-            'Checking protocol, keywords, and reachability',
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 14,
-            ),
+            'Analyzing link...',
+            style: TextStyle(fontSize: 16, color: Colors.grey[400]),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildResults() {
-    if (_lastAssessment == null) return const SizedBox.shrink();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildVerdictCard(),
-        const SizedBox(height: 20),
-        _buildDetailedResults(),
-        const SizedBox(height: 20),
-        _buildRecommendations(),
-      ],
-    );
-  }
-
-  Widget _buildVerdictCard() {
-    final assessment = _lastAssessment!;
-    Color verdictColor;
-    IconData verdictIcon;
-
-    if (assessment.isOverallSafe) {
-      verdictColor = Colors.green;
-      verdictIcon = Icons.check_circle_rounded;
-    } else if (assessment.confidence >= 0.5) {
-      verdictColor = Colors.orange;
-      verdictIcon = Icons.warning_rounded;
-    } else {
-      verdictColor = Colors.red;
-      verdictIcon = Icons.dangerous_rounded;
-    }
-
+  Widget _buildResults(LinkAssessmentEntity assessment) {
     return Container(
-      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            verdictColor.withValues(alpha: 0.2),
-            Colors.black.withValues(alpha: 0.8),
-          ],
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: assessment.isOverallSafe ? Colors.green : Colors.red,
+          width: 2,
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: verdictColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(verdictIcon, color: verdictColor, size: 32),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      assessment.verdict,
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: assessment.isOverallSafe
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : Colors.red.withValues(alpha: 0.2),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(13),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    assessment.verdict,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: assessment.isOverallSafe
+                          ? Colors.green
+                          : Colors.red,
+                    ),
+                  ),
+                ),
+                Text(
+                  '${(assessment.confidence * 100).toInt()}%',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: assessment.isOverallSafe ? Colors.green : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'URL: ${assessment.url}',
+                  style: const TextStyle(fontSize: 14, color: Colors.white),
+                ),
+                const SizedBox(height: 15),
+                const Text(
+                  'Analysis Results:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ...assessment.results.map((result) => _buildResultItem(result)),
+                const SizedBox(height: 15),
+                const Text(
+                  'Recommendations:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ...assessment.recommendations.map(
+                  (rec) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: Colors.orange,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            rec,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => _openUrl(assessment.url),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Open Link',
                       style: TextStyle(
-                        color: verdictColor,
-                        fontSize: 24,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      'Confidence: ${(assessment.confidence * 100).toInt()}%',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                onPressed: () => _openUrl(assessment.url),
-                icon: const Icon(
-                  Icons.open_in_new_rounded,
-                  color: Colors.white70,
-                ),
-                tooltip: 'Open URL',
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.link_rounded,
-                  color: Colors.indigo.withValues(alpha: 0.7),
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    assessment.url,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                      fontFamily: 'monospace',
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -519,173 +525,142 @@ class _CheckScreenState extends State<CheckScreen>
     );
   }
 
-  Widget _buildDetailedResults() {
-    final assessment = _lastAssessment!;
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
-      child: Column(
+  Widget _buildResultItem(CheckResultEntity result) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Detailed Analysis',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          Icon(
+            result.passed ? Icons.check_circle : Icons.error,
+            color: result.passed ? Colors.green : Colors.red,
+            size: 20,
           ),
-          const SizedBox(height: 16),
-          ...assessment.results.map((result) => _buildCheckResultItem(result)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCheckResultItem(CheckResult result) {
-    Color statusColor = result.passed ? Colors.green : Colors.red;
-    IconData statusIcon = result.passed
-        ? Icons.check_rounded
-        : Icons.close_rounded;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: statusColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(statusIcon, color: statusColor, size: 20),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   result.message,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
+                    color: result.passed ? Colors.green : Colors.red,
                   ),
                 ),
-              ),
-            ],
-          ),
-          if (result.details != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              result.details!,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.7),
-                fontSize: 14,
-                height: 1.4,
-              ),
+                if (result.details != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    result.details!,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ],
             ),
-          ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildRecommendations() {
-    final assessment = _lastAssessment!;
-
-    if (assessment.recommendations.isEmpty) return const SizedBox.shrink();
-
+  Widget _buildImageResults(ImageAuthenticityEntity assessment) {
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.blue.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: assessment.isAuthentic ? Colors.green : Colors.red,
+          width: 2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.lightbulb_rounded, color: Colors.blue, size: 20),
-              SizedBox(width: 12),
-              Text(
-                'Recommendations',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: assessment.isAuthentic
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : Colors.red.withValues(alpha: 0.2),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(13),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...assessment.recommendations.map(
-            (recommendation) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 6),
-                    width: 4,
-                    height: 4,
-                    decoration: const BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    assessment.verdict,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: assessment.isAuthentic ? Colors.green : Colors.red,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      recommendation,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 14,
-                        height: 1.4,
+                ),
+                Text(
+                  '${(assessment.confidence * 100).toInt()}%',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: assessment.isAuthentic ? Colors.green : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Forensic Summary:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  assessment.summary,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                if (assessment.warnings.isNotEmpty) ...[
+                  const SizedBox(height: 15),
+                  const Text(
+                    'Warnings:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ...assessment.warnings.map(
+                    (warn) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.warning_amber_rounded, size: 16, color: Colors.orange),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              warn,
+                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ],
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorDisplay() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
-      ),
-      child: Column(
-        children: [
-          const Icon(Icons.error_outline_rounded, color: Colors.red, size: 48),
-          const SizedBox(height: 16),
-          const Text(
-            'Analysis Failed',
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _errorMessage ?? 'An unknown error occurred',
-            style: const TextStyle(color: Colors.white70, fontSize: 14),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -696,106 +671,43 @@ class _CheckScreenState extends State<CheckScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.info_outline_rounded, color: Colors.indigo, size: 20),
-              SizedBox(width: 12),
-              Text(
-                'What We Check',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildInfoItem(
-            '🔒',
-            'Protocol Security',
-            'HTTPS vs HTTP encryption check',
-          ),
-          _buildInfoItem(
-            '🚩',
-            'Suspicious Keywords',
-            'Common scam and phishing indicators',
-          ),
-          _buildInfoItem(
-            '🌐',
-            'Link Reachability',
-            'Website availability and response',
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.blue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.rocket_launch_rounded,
-                  color: Colors.blue,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Future: Google Safe Browsing, AI analysis, and domain reputation checks',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ),
-              ],
+          const Text(
+            'How It Works',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
+          const SizedBox(height: 15),
+          const Text(
+            'Our engine analyzes URLs and Images for:',
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+          const SizedBox(height: 10),
+          _buildInfoItem('📸 Offline EXIF Metadata Forensics'),
+          _buildInfoItem('🔒 HTTPS Protocol Security'),
+          _buildInfoItem('🔍 Suspicious Keywords Detection'),
+          _buildInfoItem('🛑 Deep Phishing HTML Scraping'),
         ],
       ),
     );
   }
 
-  Widget _buildInfoItem(String emoji, String title, String description) {
+  Widget _buildInfoItem(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Text(
-                  description,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const Icon(Icons.check, size: 16, color: Colors.green),
+          const SizedBox(width: 8),
+          Text(text, style: const TextStyle(fontSize: 14, color: Colors.grey)),
         ],
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/user_profile_model.dart';
-import '../services/user_service.dart';
+import '../presentation/providers/user_profile_provider.dart';
 
 class UserSettingsScreen extends StatefulWidget {
   final Color themeColor;
@@ -17,14 +17,23 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
 
-  UserProfile? _userProfile;
-  bool _isLoading = true;
+  late final UserProfileProvider _provider;
+
+  UserProfile? get _userProfile => _provider.userProfile;
+  bool get _isLoading => _provider.isLoading;
 
   @override
   void initState() {
     super.initState();
+    _provider = UserProfileProvider();
+    
+    _provider.addListener(() {
+      if (_provider.userProfile != null && mounted) {
+        _controller.forward();
+      }
+    });
+
     _initializeAnimation();
-    _loadUserData();
   }
 
   void _initializeAnimation() {
@@ -39,22 +48,6 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
-  Future<void> _loadUserData() async {
-    try {
-      UserService.getCurrentUserProfile().listen((profile) {
-        if (profile != null) {
-          setState(() {
-            _userProfile = profile;
-            _isLoading = false;
-          });
-          _controller.forward();
-        }
-      });
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
-  }
-
   @override
   void dispose() {
     _controller.dispose();
@@ -63,20 +56,25 @@ class _UserSettingsScreenState extends State<UserSettingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(
-          child: CircularProgressIndicator(color: widget.themeColor),
-        ),
-      );
-    }
+    return ListenableBuilder(
+      listenable: _provider,
+      builder: (context, child) {
+        if (_isLoading) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            body: Center(
+              child: CircularProgressIndicator(color: widget.themeColor),
+            ),
+          );
+        }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: CustomScrollView(
-        slivers: [_buildAppBar(), _buildSettingsContent()],
-      ),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: CustomScrollView(
+            slivers: [_buildAppBar(), _buildSettingsContent()],
+          ),
+        );
+      },
     );
   }
 

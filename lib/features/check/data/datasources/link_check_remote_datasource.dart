@@ -106,6 +106,12 @@ class LinkCheckRemoteDataSourceImpl implements LinkCheckRemoteDataSource {
       // 1. Protocol Check (HTTPS vs HTTP)
       results.add(_checkProtocol(cleanUrl));
 
+      // Deep Heuristic: IP Routing Check
+      results.add(_checkIPRouting(cleanUrl));
+
+      // Deep Heuristic: Shortener Check
+      results.add(_checkShortener(cleanUrl));
+
       // 2. Suspicious Keywords Check
       results.add(await _checkSuspiciousKeywords(cleanUrl));
 
@@ -259,6 +265,48 @@ class LinkCheckRemoteDataSourceImpl implements LinkCheckRemoteDataSource {
     );
   }
 
+  static CheckResultModel _checkIPRouting(String url) {
+    try {
+      final uri = Uri.parse(url);
+      final isIp = RegExp(r'^(\d{1,3}\.){3}\d{1,3}$').hasMatch(uri.host);
+      
+      return CheckResultModel(
+        type: CheckType.protocol,
+        passed: !isIp,
+        message: !isIp ? '✅ Standard Domain Name' : '❌ Raw IP Address detected',
+        details: !isIp 
+            ? 'The URL uses a standard named domain.' 
+            : 'Phishing sites often use raw IP addresses (e.g., 192.168.1.1) to evade domain blocklists.',
+      );
+    } catch (_) {
+      return CheckResultModel(
+        type: CheckType.protocol,
+        passed: false,
+        message: '⚠️ Invalid URL format',
+      );
+    }
+  }
+
+  static CheckResultModel _checkShortener(String url) {
+    try {
+      final uri = Uri.parse(url);
+      final shorteners = ['bit.ly', 'tinyurl.com', 't.co', 'goo.gl', 'ow.ly', 'is.gd', 'buff.ly'];
+      
+      final isShortener = shorteners.any((s) => uri.host.endsWith(s));
+      
+      return CheckResultModel(
+        type: CheckType.newsCredibility,
+        passed: !isShortener,
+        message: !isShortener ? '✅ Direct URL routing' : '⚠️ URL Shortener detected',
+        details: !isShortener 
+            ? 'The URL goes directly to its destination.' 
+            : 'Shorteners (like bit.ly) are heavily used to mask malicious website destinations.',
+      );
+    } catch (_) {
+      return CheckResultModel(type: CheckType.newsCredibility, passed: true, message: '', details: '');
+    }
+  }
+
   static Future<CheckResultModel> _checkSuspiciousKeywords(String url) async {
     try {
       // Check URL itself
@@ -299,25 +347,38 @@ class LinkCheckRemoteDataSourceImpl implements LinkCheckRemoteDataSource {
 
   static Future<CheckResultModel> _checkReachability(String url) async {
     try {
+      // DEEP SCAPING: We use GET instead of HEAD to download the raw HTML!
       final response = await http
-          .head(
+          .get(
             Uri.parse(url),
-            headers: {'User-Agent': 'MIL-Hub-LinkChecker/1.0'},
+            headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'},
           )
           .timeout(const Duration(seconds: 10));
 
       final passed = response.statusCode >= 200 && response.statusCode < 400;
+      
+      // Perform HTML Deep Heuristics
+      final html = response.body.toLowerCase();
+      final hasHiddenIframe = RegExp(r"""<iframe[^>]*(display:\s*none|opacity:\s*0|width=["']?(0|1)["']?|height=["']?(0|1)["']?)""").hasMatch(html);
+      final hasUnsecuredPassword = !url.startsWith('https') && RegExp(r"""<input[^>]+type=["']?password["']?""").hasMatch(html);
+
+      String alertMessage = passed ? '✅ Link is reachable' : '❌ Link is not reachable';
+      String details = passed ? 'The website responded successfully.' : 'The website is currently unavailable.';
+      
+      if (hasHiddenIframe) {
+        alertMessage = '❌ Hidden IFrame Detected (Clickjacking Risk)';
+        details = 'This website contains invisible components often used to hijack your clicks.';
+      } else if (hasUnsecuredPassword) {
+        alertMessage = '❌ Unsecured Password Field Detected';
+        details = 'This website asks for a password over an unencrypted connection! Your data could be stolen.';
+      }
 
       return CheckResultModel(
         type: CheckType.reachability,
-        passed: passed,
-        message: passed
-            ? '✅ Link is reachable (${response.statusCode})'
-            : '❌ Link is not reachable (${response.statusCode})',
-        details: passed
-            ? 'The website responded successfully to our request.'
-            : 'The website is currently unavailable or returned an error.',
-        data: {'statusCode': response.statusCode, 'headers': response.headers},
+        passed: passed && !hasHiddenIframe && !hasUnsecuredPassword,
+        message: alertMessage,
+        details: details,
+        data: {'statusCode': response.statusCode},
       );
     } on SocketException {
       return CheckResultModel(

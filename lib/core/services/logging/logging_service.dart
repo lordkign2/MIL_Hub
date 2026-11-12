@@ -21,7 +21,7 @@ abstract class LoggingService {
 
 class LoggingServiceImpl implements LoggingService {
   final Logger _logger;
-  final FirebaseCrashlytics _crashlytics;
+  final FirebaseCrashlytics? _crashlytics;
   final LoggingConfig _config;
   Map<String, dynamic> _globalContext = {};
 
@@ -30,7 +30,7 @@ class LoggingServiceImpl implements LoggingService {
     FirebaseCrashlytics? crashlytics,
     LoggingConfig? config,
   })  : _logger = logger ?? _createLogger(),
-        _crashlytics = crashlytics ?? FirebaseCrashlytics.instance,
+        _crashlytics = crashlytics ?? (kIsWeb ? null : FirebaseCrashlytics.instance),
         _config = config ?? LoggingConfig.currentConfig;
 
   static Logger _createLogger() {
@@ -119,6 +119,8 @@ class LoggingServiceImpl implements LoggingService {
   }
 
   void _logToCrashlytics(LogLevel level, String message, dynamic error, StackTrace? stackTrace, Map<String, dynamic> context) {
+    if (_crashlytics == null) return;
+
     final contextString = context.isNotEmpty ? ' | Context: $context' : '';
     final fullMessage = '$message$contextString';
 
@@ -144,14 +146,14 @@ class LoggingServiceImpl implements LoggingService {
 
   @override
   void setUserId(String? userId) {
-    if (_config.enableCrashlyticsLogging) {
+    if (_config.enableCrashlyticsLogging && _crashlytics != null) {
       _crashlytics.setUserIdentifier(userId ?? '');
     }
   }
 
   @override
   void setCustomKey(String key, dynamic value) {
-    if (_config.enableCrashlyticsLogging) {
+    if (_config.enableCrashlyticsLogging && _crashlytics != null) {
       _crashlytics.setCustomKey(key, value.toString());
     }
   }
@@ -164,7 +166,7 @@ class LoggingServiceImpl implements LoggingService {
   @override
   Future<void> flush() async {
     // Logger doesn't have a flush method, but we can ensure Crashlytics logs are sent
-    if (_config.enableCrashlyticsLogging) {
+    if (_config.enableCrashlyticsLogging && _crashlytics != null) {
       await _crashlytics.didCrashOnPreviousExecution();
     }
   }

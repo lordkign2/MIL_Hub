@@ -4,6 +4,8 @@ import '../../domain/entities/link_check_entity.dart';
 import '../../domain/repositories/link_check_repository.dart';
 import '../datasources/link_check_remote_datasource.dart';
 import '../models/link_check_model.dart';
+import 'dart:io';
+import '../../services/image_authenticity_service.dart';
 
 class LinkCheckRepositoryImpl implements LinkCheckRepository {
   final LinkCheckRemoteDataSource remoteDataSource;
@@ -77,8 +79,27 @@ class LinkCheckRepositoryImpl implements LinkCheckRepository {
 
 class ImageAuthenticityRepositoryImpl implements ImageAuthenticityRepository {
   @override
-  Future<ImageAuthenticityEntity> checkImageAuthenticity(String imagePath) {
-    // TODO: Implement image authenticity check
-    throw UnimplementedError();
+  Future<ImageAuthenticityEntity> checkImageAuthenticity(String imagePath) async {
+    try {
+      final result = await ImageAuthenticityService.checkImageAuthenticity(File(imagePath));
+      
+      return ImageAuthenticityEntity(
+        isAuthentic: result.isAuthentic,
+        confidence: result.confidence,
+        verdict: result.verdict,
+        summary: result.summary,
+        searchResults: result.searchResults.map((e) => ImageSearchResultEntity(
+          apiSource: e.apiSource,
+          totalMatches: e.totalMatches,
+          matches: const [],
+          processingTime: e.processingTime,
+          status: e.status,
+        )).toList(),
+        warnings: result.warnings,
+        metadata: result.metadata,
+      );
+    } catch (e) {
+      throw Failure(e.toString());
+    }
   }
 }

@@ -35,22 +35,24 @@ void main() async {
     // Set up global error handlers
     errorHandler.setupGlobalErrorHandlers();
     
-    // Configure Crashlytics based on build mode
-    if (kDebugMode) {
-      // Disable Crashlytics collection while in debug mode
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
-      loggingService.info('Crashlytics disabled in debug mode');
-    } else {
-      // Enable Crashlytics in release mode
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-      loggingService.info('Crashlytics enabled in release mode');
-      
-      // Add app version and build info to Crashlytics context
-      loggingService.addGlobalContext({
-        'app_version': AppConstants.appVersion ?? '1.0.0',
-        'build_mode': 'release',
-        'platform': defaultTargetPlatform.toString(),
-      });
+    // Configure Crashlytics based on build mode (Crashlytics is not supported on Web)
+    if (!kIsWeb) {
+      if (kDebugMode) {
+        // Disable Crashlytics collection while in debug mode
+        await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+        loggingService.info('Crashlytics disabled in debug mode');
+      } else {
+        // Enable Crashlytics in release mode
+        await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+        loggingService.info('Crashlytics enabled in release mode');
+        
+        // Add app version and build info to Crashlytics context
+        loggingService.addGlobalContext({
+          'app_version': AppConstants.appVersion,
+          'build_mode': 'release',
+          'platform': defaultTargetPlatform.toString(),
+        });
+      }
     }
     
     loggingService.info('MIL Hub app initialized successfully');
@@ -58,7 +60,7 @@ void main() async {
   } catch (error, stackTrace) {
     // Fallback logging if dependency injection fails
     debugPrint('Failed to initialize app: $error');
-    if (!kDebugMode) {
+    if (!kDebugMode && !kIsWeb) {
       // Try to record to Crashlytics directly
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
       FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true);

@@ -1,8 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:image_picker/image_picker.dart'; // TODO: Add image_picker dependency
 import '../models/user_profile_model.dart';
 import '../services/user_service.dart';
+import '../presentation/providers/user_profile_provider.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final Color themeColor;
@@ -22,16 +23,31 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   final _displayNameController = TextEditingController();
   final _bioController = TextEditingController();
 
-  UserProfile? _userProfile;
-  bool _isLoading = true;
+  late final UserProfileProvider _provider;
+
   bool _isEditing = false;
   bool _isSaving = false;
+
+  UserProfile? get _userProfile => _provider.userProfile;
+  bool get _isLoading => _provider.isLoading;
 
   @override
   void initState() {
     super.initState();
+    _provider = UserProfileProvider();
+    
+    _provider.addListener(() {
+      if (_provider.userProfile != null && mounted) {
+        // Pre-fill text controllers when we receive the profile
+        if (_displayNameController.text.isEmpty) {
+          _displayNameController.text = _provider.userProfile!.displayName;
+          _bioController.text = _provider.userProfile!.bio ?? '';
+        }
+        _controller.forward();
+      }
+    });
+
     _initializeAnimation();
-    _loadUserProfile();
   }
 
   void _initializeAnimation() {
@@ -46,24 +62,6 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
-  Future<void> _loadUserProfile() async {
-    try {
-      UserService.getCurrentUserProfile().listen((profile) {
-        if (profile != null) {
-          setState(() {
-            _userProfile = profile;
-            _displayNameController.text = profile.displayName;
-            _bioController.text = profile.bio ?? '';
-            _isLoading = false;
-          });
-          _controller.forward();
-        }
-      });
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
-  }
-
   @override
   void dispose() {
     _controller.dispose();
@@ -74,18 +72,23 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(
-          child: CircularProgressIndicator(color: widget.themeColor),
-        ),
-      );
-    }
+    return ListenableBuilder(
+      listenable: _provider,
+      builder: (context, child) {
+        if (_isLoading) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            body: Center(
+              child: CircularProgressIndicator(color: widget.themeColor),
+            ),
+          );
+        }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: CustomScrollView(slivers: [_buildAppBar(), _buildProfileContent()]),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: CustomScrollView(slivers: [_buildAppBar(), _buildProfileContent()]),
+        );
+      },
     );
   }
 
@@ -147,14 +150,17 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               ),
                               child: ClipOval(
                                 child: _userProfile?.photoURL != null
-                                    ? Image.network(
-                                        _userProfile!.photoURL!,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                              return _buildDefaultAvatar();
-                                            },
-                                      )
+                                    ? _userProfile!.photoURL!.startsWith('http')
+                                        ? Image.network(
+                                            _userProfile!.photoURL!,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(),
+                                          )
+                                        : Image.file(
+                                            File(_userProfile!.photoURL!),
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(),
+                                          )
                                     : _buildDefaultAvatar(),
                               ),
                             ),
@@ -783,41 +789,22 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   }
 
   Future<void> _changeProfilePhoto() async {
-    try {
-      // TODO: Implement image picker when package is available
-      /*
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 80,
-      );
-
-      if (image != null) {
-        // TODO: Upload image to storage and update profile
-        // print('Selected image: ${image.path}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Photo updated successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-      */
-
-      // Placeholder implementation
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Photo upload feature coming soon!'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-    } catch (e) {
+    await _provider.updateProfilePhoto();
+    
+    if (!mounted) return;
+    
+    if (_provider.errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to access camera: $e'),
+          content: Text(_provider.errorMessage!),
           backgroundColor: Colors.red,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Photo updated locally!'),
+          backgroundColor: Colors.green,
         ),
       );
     }
@@ -829,14 +816,10 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     setState(() => _isSaving = true);
 
     try {
-      final updatedProfile = _userProfile!.copyWith(
-        displayName: _displayNameController.text.trim(),
-        bio: _bioController.text.trim().isEmpty
-            ? null
-            : _bioController.text.trim(),
+      await _provider.saveProfileDetails(
+        _displayNameController.text,
+        _bioController.text,
       );
-
-      await UserService.createOrUpdateUserProfile(updatedProfile);
 
       setState(() {
         _isEditing = false;
@@ -852,6 +835,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isSaving = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
